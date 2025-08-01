@@ -225,6 +225,14 @@ main {
     opacity: 0.7;
 }
 
+.reminder-item-simple .cancel-button {
+    background-color: #FF7043; /* Orange/coral color for cancellation */
+    padding: 10px 15px;
+    font-size: 1em;
+    flex-grow: 0; /* Prevent button from stretching */
+    min-width: 100px; /* Ensure a consistent width */
+}
+
 .reminder-item-simple .accept-button {
     background-color: #28a745; /* Positive green for contrast */
     padding: 10px 15px;

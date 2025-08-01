@@ -316,13 +316,72 @@ app.post('/api/reminders', (req, res) => {
 });
 
 app.get('/api/requests/pending', (req, res) => {
-    // The query is now hardcoded to fetch pending reminders from Madrid
-    const sql = "SELECT * FROM reminders WHERE province = 'Madrid' AND status = 'pending' ORDER BY date, time";
-    db.all(sql, [], (err, rows) => {
+    const { province } = req.query;
+    if (!province) {
+        return res.status(400).json({ error: 'Province is required' });
+    }
+    const sql = "SELECT * FROM reminders WHERE province = ? AND status = 'pending' ORDER BY date, time";
+    db.all(sql, [province], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching requests' });
         }
         res.json(rows);
+    });
+});
+
+app.get('/api/requests/accepted', (req, res) => {
+    const { volunteerId } = req.query;
+    if (!volunteerId) {
+        return res.status(400).json({ error: 'Volunteer ID is required' });
+    }
+    const sql = `
+        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName, u.phone as seniorPhone
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.volunteerId = ? AND r.status = 'accepted'
+        ORDER BY r.date, r.time
+    `;
+    db.all(sql, [volunteerId], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching accepted requests' });
+        }
+        res.json(rows);
+    });
+});
+
+app.get('/api/requests/past', (req, res) => {
+    const { volunteerId } = req.query;
+    if (!volunteerId) {
+        return res.status(400).json({ error: 'Volunteer ID is required' });
+    }
+
+    const now = new Date().toISOString();
+
+    const sql = `
+        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName, u.phone as seniorPhone
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.volunteerId = ? AND (r.date || 'T' || r.time) < ?
+        ORDER BY r.date DESC, r.time DESC
+    `;
+
+    db.all(sql, [volunteerId, now], (err, rows) => {
+        if (err) {
+            console.error('Error fetching past requests:', err);
+            return res.status(500).json({ error: 'Error fetching past requests' });
+        }
+        res.json(rows);
+    });
+});
+
+app.post('/api/requests/cancel', (req, res) => {
+    const { reminderId } = req.body;
+    const sql = "UPDATE reminders SET volunteerId = NULL, status = 'pending' WHERE id = ?";
+    db.run(sql, [reminderId], function(err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error cancelling request' });
+        }
+        res.json({ message: 'Request cancelled successfully' });
     });
 });
 
