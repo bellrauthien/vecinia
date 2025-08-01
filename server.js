@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const OpenAI = require('openai');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const app = express();
-const port = 3002;
+const port = 3000;
 
 // Check for API key (Temporarily disabled)
 /*
@@ -24,6 +25,12 @@ const openai = new OpenAI({
 */
 
 app.use(express.json());
+
+// Serve auth.html as the default page for the root URL
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'auth.html'));
+});
+
 app.use(express.static(__dirname)); // Serve static files from the root directory
 
 // --- Database Setup ---
