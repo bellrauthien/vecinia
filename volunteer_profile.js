@@ -14,16 +14,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/api/user/profile/${user.id}`);
             if (response.ok) {
                 const profile = await response.json();
+                console.log('Received profile data:', profile); // Diagnostic log
+
+                // Refresh user data in localStorage to keep it up-to-date
+                localStorage.setItem('user', JSON.stringify(profile));
+
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('province').value = profile.province || '';
 
-                // Display last login date
+                // Display last login date and make it read-only
+                const lastLoginInput = document.getElementById('last-login');
                 if (profile.last_login_date) {
                     const lastLoginDate = new Date(profile.last_login_date);
-                    document.getElementById('last-login').value = lastLoginDate.toLocaleString();
+                    lastLoginInput.value = lastLoginDate.toLocaleString();
                 } else {
-                    document.getElementById('last-login').value = 'Never';
+                    lastLoginInput.value = 'Never';
                 }
+                lastLoginInput.disabled = true; // Force read-only
 
                 // Set availability
                 if (profile.availability) {

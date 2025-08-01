@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const app = express();
-const port = 3000;
+const port = 3003;
 
 // Check for API key (Temporarily disabled)
 /*
@@ -173,27 +173,6 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-app.get('/api/user/profile/:userId', (req, res) => {
-    const { userId } = req.params;
-    // Select all editable fields for any user type
-    const sql = 'SELECT email, phone, address, province, skills, availability, about_me FROM users WHERE id = ?';
-
-    db.get(sql, [userId], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error fetching profile data' });
-        }
-        if (row) {
-            res.json({
-                ...row,
-                // Ensure skills is always an array for volunteers
-                skills: row.skills ? row.skills.split(',') : []
-            });
-        } else {
-            res.status(404).json({ error: 'User not found' });
-        }
-    });
-});
-
 // Endpoint to get user profile by ID
 app.get('/api/user/profile/:id', (req, res) => {
     const { id } = req.params;
@@ -209,6 +188,7 @@ app.get('/api/user/profile/:id', (req, res) => {
             } else if (user.profileType === 'volunteer' && !user.skills) {
                 user.skills = [];
             }
+            console.log('Sending user profile data:', user); // Diagnostic log
             res.json(user);
         } else {
             res.status(404).json({ error: 'User not found' });
@@ -218,6 +198,11 @@ app.get('/api/user/profile/:id', (req, res) => {
 
 app.post('/api/user/profile', (req, res) => {
     const { userId, ...profileData } = req.body;
+
+    // If skills are provided as an array, convert them to a comma-separated string
+    if (profileData.skills && Array.isArray(profileData.skills)) {
+        profileData.skills = profileData.skills.join(',');
+    }
 
     if (!userId) {
         return res.status(400).json({ error: 'User ID is required' });

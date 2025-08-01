@@ -14,18 +14,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/api/user/profile/${user.id}`);
             if (response.ok) {
                 const profile = await response.json();
+
+                // Refresh user data in localStorage to keep it up-to-date
+                localStorage.setItem('user', JSON.stringify(profile));
+
                 document.getElementById('email').value = profile.email || '';
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('address').value = profile.address || '';
                 document.getElementById('about_me').value = profile.about_me || '';
 
-                // Display last login date
+                // Display last login date and make it read-only
+                const lastLoginInput = document.getElementById('last-login');
                 if (profile.last_login_date) {
                     const lastLoginDate = new Date(profile.last_login_date);
-                    document.getElementById('last-login').value = lastLoginDate.toLocaleString();
+                    lastLoginInput.value = lastLoginDate.toLocaleString();
                 } else {
-                    document.getElementById('last-login').value = 'Never';
+                    lastLoginInput.value = 'Never';
                 }
+                lastLoginInput.disabled = true; // Force read-only
             } else {
                 console.error('Failed to load profile data');
             }
