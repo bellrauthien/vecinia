@@ -128,13 +128,18 @@ app.post('/api/chat', async (req, res) => {
 
 // --- Auth API Endpoints ---
 app.post('/api/register', async (req, res) => {
-    const { firstName, lastName, email, password, profileType, address, phone, birthDate } = req.body;
+    const { firstName, lastName, email, password, profileType, address, phone, birthDate, province } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const sql = 'INSERT INTO users (firstName, lastName, email, password, profileType, address, phone, birthDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        db.run(sql, [firstName, lastName, email, hashedPassword, profileType, address, phone, birthDate], function(err) {
+        const sql = 'INSERT INTO users (firstName, lastName, email, password, profileType, address, phone, birthDate, province) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        db.run(sql, [firstName, lastName, email, hashedPassword, profileType, address, phone, birthDate, province], function(err) {
             if (err) {
-                return res.status(400).json({ error: 'Email already exists.' });
+                console.error(err.message);
+                // Specific check for UNIQUE constraint violation
+                if (err.message.includes('UNIQUE constraint failed: users.email')) {
+                    return res.status(400).json({ error: 'Email already exists.' });
+                }
+                return res.status(500).json({ error: 'Error registering user' });
             }
             res.status(201).json({ id: this.lastID });
         });

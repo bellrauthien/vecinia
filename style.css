@@ -137,7 +137,8 @@ main {
 
 #register-form .action-button { background-color: #795548; }
 
-#register-form input {
+#register-form input,
+#register-form select {
     padding: 15px;
     font-size: 1.2em;
     border: 2px solid #5D4037;
@@ -317,6 +318,6 @@ main {
 /* === Media Queries for Responsiveness === */
 @media (max-width: 480px) {
     .action-button { font-size: 1.2em; padding: 20px; }
-    #register-form input { font-size: 1.1em; padding: 12px; }
+    #register-form input, #register-form select { font-size: 1.1em; padding: 12px; }
     .profile-selector { flex-direction: column; align-items: flex-start; }
 }

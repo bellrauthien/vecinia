@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const profileRadios = document.querySelectorAll('input[name="profile"]');
-    const addressField = document.getElementById('address-field');
+
     const registerForm = document.getElementById('register-form');
     const phoneInput = document.getElementById('phone');
     const phoneError = document.getElementById('phone-error');
@@ -12,11 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const birthDateInput = document.getElementById('birth-date');
     const ageError = document.getElementById('age-error');
 
-    const toggleAddressField = () => {
-        const isSenior = document.querySelector('input[name="profile"]:checked').value === 'senior';
-        addressField.classList.toggle('hidden', !isSenior);
-        document.getElementById('address').required = isSenior;
-    };
+
 
     const validatePhone = () => {
         const phoneRegex = /^[6-9]\d{8}$/;
@@ -96,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     profileRadios.forEach(radio => {
         radio.addEventListener('change', () => {
-            toggleAddressField();
             validateAge(); // Re-validate age when profile type changes
         });
     });
@@ -129,16 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmPasswordInput.addEventListener('keyup', validateConfirmPassword);
 
     if (validateAge() && validatePhone() && validateEmail() && validateConfirmEmail() && validateConfirmPassword() && registerForm.checkValidity()) {
+            const profileType = document.querySelector('input[name="profile"]:checked').value;
             const formData = {
                 firstName: document.getElementById('first-name').value,
                 lastName: document.getElementById('last-name').value,
                 email: emailInput.value,
                 password: passwordInput.value,
-                profileType: document.querySelector('input[name="profile"]:checked').value,
-                address: document.getElementById('address').value,
+                profileType: profileType,
                 phone: phoneInput.value,
-                birthDate: birthDateInput.value
+                birthDate: birthDateInput.value,
+                province: document.getElementById('province').value
             };
+
+
 
             try {
                 const response = await fetch('/api/register', {
@@ -162,14 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial setup
-    toggleAddressField();
+
 });
 
-function initAutocomplete() {
-    const addressInput = document.getElementById('address');
-    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-        types: ['address'],
-        componentRestrictions: { 'country': ['ES', 'US', 'GB'] } // Restrict to certain countries
-    });
-}
+
