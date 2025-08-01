@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailError = document.getElementById('email-error');
     const birthDateInput = document.getElementById('birth-date');
     const ageError = document.getElementById('age-error');
+    const messageContainer = document.getElementById('message-container');
 
 
 
@@ -148,14 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    alert('Registration successful! Please log in.');
-                    window.location.href = 'login.html';
+                    displayMessage('Registration successful! Redirecting to login...', 'success', messageContainer);
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000); // Wait 2 seconds before redirecting
                 } else {
                     const data = await response.json();
-                    alert(`Registration failed: ${data.error}`);
+                    displayMessage(`Registration failed: ${data.error}`, 'error', messageContainer);
                 }
             } catch (error) {
-                alert('An error occurred. Please try again.');
+                displayMessage('An error occurred. Please try again.', 'error', messageContainer);
             }
         }
     });

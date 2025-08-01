@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const acceptedContainer = document.getElementById('accepted-requests-list');
     const availableContainer = document.getElementById('available-requests-list');
     const pastContainer = document.getElementById('past-requests-list');
+    const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user || user.profileType !== 'volunteer') {
@@ -82,15 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ reminderId })
             });
             if (response.ok) {
+                displayMessage('Request cancelled successfully.', 'success', messageContainer);
                 fetchAcceptedRequests();
                 fetchAvailableRequests();
                 fetchPastRequests(); // Also refresh past requests in case one was moved
             } else {
-                alert('Failed to cancel the request.');
+                displayMessage('Failed to cancel the request.', 'error', messageContainer);
             }
         } catch (error) {
             console.error('Error cancelling request:', error);
-            alert('An error occurred while cancelling.');
+            displayMessage('An error occurred while cancelling.', 'error', messageContainer);
         }
     };
 

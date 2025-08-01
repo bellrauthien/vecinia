@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const params = new URLSearchParams(window.location.search);
     const reminderId = params.get('id');
+    const messageContainer = document.getElementById('message-container');
 
     if (!user) {
         window.location.href = 'login.html';
@@ -67,14 +68,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (response.ok) {
-                alert(`Reminder ${reminderId ? 'updated' : 'added'} successfully!`);
-                window.location.href = 'reminders.html';
+                displayMessage(`Reminder ${reminderId ? 'updated' : 'added'} successfully!`, 'success', messageContainer);
+                setTimeout(() => {
+                    window.location.href = 'reminders.html';
+                }, 2000);
             } else {
-                alert(`Failed to ${reminderId ? 'update' : 'add'} reminder. Please try again.`);
+                displayMessage(`Failed to ${reminderId ? 'update' : 'add'} reminder. Please try again.`, 'error', messageContainer);
             }
         } catch (error) {
             console.error('Error saving reminder:', error);
-            alert('An error occurred while saving the reminder.');
+            displayMessage('An error occurred while saving the reminder.', 'error', messageContainer);
         }
     });
 });

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const detailsContainer = document.getElementById('request-details-container');
     const acceptButton = document.getElementById('accept-request-button');
+    const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user || user.profileType !== 'volunteer') {
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 detailsContainer.innerHTML = `
                     <p><strong>Senior:</strong> ${request.seniorFirstName} ${request.seniorLastName}</p>
+                    <p><strong>Phone:</strong> ${request.seniorPhone}</p>
                     <p><strong>Type:</strong> ${request.type}</p>
                     <p><strong>Details:</strong> ${request.note}</p>
                     <p><strong>Date:</strong> ${new Date(request.date).toLocaleDateString()}</p>
@@ -57,14 +59,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                alert('Request accepted successfully!');
-                window.location.href = 'requests.html';
+                displayMessage('Request accepted successfully!', 'success', messageContainer);
+                setTimeout(() => {
+                    window.location.href = 'requests.html';
+                }, 2000);
             } else {
-                alert('Failed to accept the request. It might have been taken by someone else.');
+                displayMessage('Failed to accept the request. It might have been taken by someone else.', 'error', messageContainer);
             }
         } catch (error) {
             console.error('Error accepting request:', error);
-            alert('An error occurred.');
+            displayMessage('An error occurred.', 'error', messageContainer);
         }
     };
 

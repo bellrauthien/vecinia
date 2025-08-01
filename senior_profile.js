@@ -43,8 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission
     profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        messageContainer.textContent = ''; // Clear previous messages
-
         const updatedProfile = {
             userId: user.id,
             email: document.getElementById('email').value,
@@ -63,21 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                messageContainer.textContent = 'Profile updated successfully!';
-                messageContainer.className = 'message-container success';
+                displayMessage('Profile updated successfully!', 'success', messageContainer);
             } else {
-                messageContainer.textContent = 'Failed to update profile.';
-                messageContainer.className = 'message-container error';
+                displayMessage('Failed to update profile.', 'error', messageContainer);
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            messageContainer.textContent = 'An error occurred while updating the profile.';
-            messageContainer.className = 'message-container error';
-        } finally {
-            setTimeout(() => {
-                messageContainer.textContent = '';
-                messageContainer.className = 'message-container';
-            }, 3000);
+            displayMessage('An error occurred while updating the profile.', 'error', messageContainer);
         }
     });
 

@@ -262,7 +262,7 @@ app.get('/api/reminders', (req, res) => {
 app.get('/api/reminders/:id', (req, res) => {
     const { id } = req.params;
     const sql = `
-        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName
+        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName, u.phone as seniorPhone
         FROM reminders r
         JOIN users u ON r.userId = u.id
         WHERE r.id = ?

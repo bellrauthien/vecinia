@@ -69,6 +69,35 @@ body {
     cursor: pointer;
 }
 
+/* === Global Message Container === */
+.message-container {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.message-container.show {
+    display: block;
+    opacity: 1;
+}
+
+.message-container.success {
+    background-color: #DFF2BF; /* Light green */
+    color: #4F8A10; /* Dark green */
+    border: 1px solid #4F8A10;
+}
+
+.message-container.error {
+    background-color: #FFBABA; /* Light red */
+    color: #D8000C; /* Dark red */
+    border: 1px solid #D8000C;
+}
+
 /* === Main Action Buttons (Home Page) === */
 main {
     display: flex;
@@ -199,6 +228,8 @@ main {
 .simple-form h2 { text-align: center; margin-top: 0; }
 .simple-form label { font-weight: bold; }
 .simple-form .action-button { background-color: #F39C12; }
+
+#accept-request-button { background-color: #28a745; } /* Contrasting green for accept button */
 
 .simple-form input,
 .simple-form select {
