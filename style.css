@@ -242,6 +242,29 @@ main {
 }
 
 
+.reminder-item-simple-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Make the entire area clickable */
+}
+
+.reminder-item-simple-link .reminder-item-simple {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.reminder-item-simple-link:hover .reminder-item-simple {
+    background-color: #FFFDE7; /* Light yellow on hover */
+}
+
+.view-details-arrow {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFD180;
+}
+
 .reminder-item-simple {
     display: flex;
     justify-content: space-between;

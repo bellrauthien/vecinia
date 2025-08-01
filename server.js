@@ -258,10 +258,15 @@ app.get('/api/reminders', (req, res) => {
     });
 });
 
-// Endpoint to get a single reminder by ID
+// Endpoint to get a single reminder by ID, including senior's name
 app.get('/api/reminders/:id', (req, res) => {
     const { id } = req.params;
-    const sql = 'SELECT * FROM reminders WHERE id = ?';
+    const sql = `
+        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.id = ?
+    `;
     db.get(sql, [id], (err, row) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching reminder' });

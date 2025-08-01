@@ -53,20 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             requests.forEach(request => {
-                const el = document.createElement('div');
-                el.className = 'reminder-item-simple';
+                const el = document.createElement('a');
+                el.href = `request-detail.html?id=${request.id}`;
+                el.className = 'reminder-item-simple-link'; // Use a wrapper class for the link
                 el.innerHTML = `
-                    <div>
-                        <span class="reminder-type-tag">${request.type}</span>
-                        <strong>${request.note}</strong>
-                        <p>${new Date(request.date).toLocaleDateString()} at ${request.time}</p>
+                    <div class="reminder-item-simple">
+                        <div>
+                            <span class="reminder-type-tag">${request.type}</span>
+                            <strong>${request.note}</strong>
+                            <p>${new Date(request.date).toLocaleDateString()} at ${request.time}</p>
+                        </div>
+                        <span class="view-details-arrow">></span>
                     </div>
-                    <button class="action-button accept-button" data-id="${request.id}">Accept</button>
                 `;
                 availableContainer.appendChild(el);
-            });
-            document.querySelectorAll('.accept-button').forEach(button => {
-                button.addEventListener('click', (e) => acceptRequest(e.target.dataset.id));
             });
         } catch (error) {
             console.error('Error fetching available requests:', error);
