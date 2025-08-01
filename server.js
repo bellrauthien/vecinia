@@ -272,7 +272,10 @@ app.get('/api/reminders/:id', (req, res) => {
 // Endpoint to update a reminder
 app.put('/api/reminders/:id', (req, res) => {
     const { id } = req.params;
-    const { note, type, date, time, address, province, needs_volunteer } = req.body;
+    const { note, type, date, time, address = null, province, needs_volunteer } = req.body;
+
+    // Convert boolean to integer for SQLite
+    const needsVolunteerInt = needs_volunteer ? 1 : 0;
     const sql = `UPDATE reminders SET 
         note = ?,
         type = ?,
@@ -283,7 +286,7 @@ app.put('/api/reminders/:id', (req, res) => {
         needs_volunteer = ?
         WHERE id = ?`;
 
-    db.run(sql, [note, type, date, time, address, province, needs_volunteer, id], function(err) {
+    db.run(sql, [note, type, date, time, address, province, needsVolunteerInt, id], function(err) {
         if (err) {
             return res.status(500).json({ error: 'Error updating reminder' });
         }
@@ -295,9 +298,10 @@ app.put('/api/reminders/:id', (req, res) => {
 });
 
 app.post('/api/reminders', (req, res) => {
-    const { note, type, date, time, address, province, userId, needs_volunteer } = req.body;
+    const { note, type, date, time, address = null, province, userId, needs_volunteer } = req.body; // address is now optional
+    const needsVolunteerInt = needs_volunteer ? 1 : 0; // Convert boolean to integer
     const sql = 'INSERT INTO reminders (note, type, date, time, address, province, userId, needs_volunteer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    db.run(sql, [note, type, date, time, address, province, userId, needs_volunteer], function(err) {
+    db.run(sql, [note, type, date, time, address, province, userId, needsVolunteerInt], function(err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;

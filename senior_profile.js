@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('email').value = profile.email || '';
                 document.getElementById('phone').value = profile.phone || '';
-                document.getElementById('address').value = profile.address || '';
+                document.getElementById('province').value = profile.province || '';
                 document.getElementById('about_me').value = profile.about_me || '';
 
                 // Display last login date and make it read-only
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             userId: user.id,
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
+            province: document.getElementById('province').value,
             about_me: document.getElementById('about_me').value
         };
 

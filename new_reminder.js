@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('reminder-type').value = reminder.type;
                 document.getElementById('reminder-date').value = reminder.date;
                 document.getElementById('reminder-time').value = reminder.time;
-                document.getElementById('reminder-address').value = reminder.address;
+
                 document.getElementById('province').value = reminder.province;
                 document.getElementById('needs-volunteer').checked = reminder.needs_volunteer;
             } else {
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             type: document.getElementById('reminder-type').value,
             date: document.getElementById('reminder-date').value,
             time: document.getElementById('reminder-time').value,
-            address: document.getElementById('reminder-address').value,
+
             province: document.getElementById('province').value,
             needs_volunteer: document.getElementById('needs-volunteer').checked
         };

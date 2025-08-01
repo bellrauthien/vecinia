@@ -212,6 +212,27 @@ main {
 .reminders-list-container h2 { text-align: center; }
 #reminders-list { list-style: none; padding: 0; }
 
+.reminder-item-simple.accepted {
+    background-color: #f0f0f0;
+    border-left-color: #28a745;
+    cursor: default;
+}
+
+.reminder-item-simple.accepted .accept-button {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.reminder-item-simple .accept-button {
+    background-color: #28a745; /* Positive green for contrast */
+    padding: 10px 15px;
+    font-size: 1em;
+    flex-grow: 0; /* Prevent button from stretching */
+    min-width: 100px; /* Ensure a consistent width */
+}
+
+
 .reminder-item-simple {
     display: flex;
     justify-content: space-between;

@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                alert('Request accepted! Thank you for your help.');
-                // Remove the accepted request from the view
-                buttonElement.closest('.reminder-item-simple').remove();
+                // Update the button and the item's appearance
+                buttonElement.textContent = 'Accepted';
+                buttonElement.disabled = true;
+                buttonElement.closest('.reminder-item-simple').classList.add('accepted');
             } else {
                 alert('Failed to accept the request. It might have been taken by someone else.');
             }
