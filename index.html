@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senior Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        
+        <header class="app-header">
+            <div class="header-content">
+                <h1 id="welcome-header">Welcome, <span id="user-name"></span></h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout">
+                </a>
+            </div>
+        </header>
+        <main>
+            <button class="action-button" id="chat-button">
+                <img src="assets/chat-icon.png" alt="Chat">
+                <span>Chat</span>
+            </button>
+            <button class="action-button" id="reminders-button">
+                <img src="assets/reminders-icon.png" alt="Reminders">
+                <span>Reminders</span>
+            </button>
+            <a href="senior_profile.html" id="profile-button" class="action-button">
+                <img src="assets/profile-icon.png" alt="My Profile">
+                <span>My Profile</span>
+            </a>
+            <button class="action-button" id="help-button">
+                <img src="assets/help-icon.png" alt="Request Help">
+                <span>Request Help</span>
+            </button>
+        </main>
+    </div>
+    <script src="index.js"></script>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

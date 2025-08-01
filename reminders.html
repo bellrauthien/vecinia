@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders - Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Home"></a>
+                <h1>My Reminders</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout">
+                </a>
+            </div>
+        </header>
+
+        <main>
+            <a href="new_reminder.html" class="action-button new-reminder-button">+ New Reminder</a>
+            <div class="reminders-list-container">
+                <h2>My Appointments</h2>
+                <ul id="reminders-list"></ul>
+            </div>
+        </main>
+    </div>
+    <script src="reminders.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

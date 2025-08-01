@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - VecinAI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Home"></a>
+                <h1>My Profile</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout">
+                </a>
+            </div>
+        </header>
+        <main>
+            <form id="senior-profile-form" class="simple-form">
+                <h2>Update Your Information</h2>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address">
+
+                <label for="about_me">About Me:</label>
+                <textarea id="about_me" name="about_me" rows="4" placeholder="Tell us a little about yourself..."></textarea>
+
+                <button type="submit" class="action-button">Save Profile</button>
+            </form>
+        </main>
+    </div>
+    <script src="auth.js"></script>
+    <script src="senior_profile.js"></script>
+</body>
+</html>

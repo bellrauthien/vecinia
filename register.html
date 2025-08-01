@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration - Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_DE_API_AQUÍ&libraries=places&callback=initAutocomplete" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="auth.html" class="home-button"><img src="assets/home-icon.png" alt="Back"></a>
+                <h1>Register</h1>
+            </div>
+        </header>
+
+        <form id="register-form">
+            <div class="profile-selector">
+                <label>
+                    <input type="radio" name="profile" value="senior" checked>
+                    <span>I am a senior</span>
+                </label>
+                <label>
+                    <input type="radio" name="profile" value="volunteer">
+                    <span>I am a volunteer</span>
+                </label>
+            </div>
+
+            <input type="text" id="first-name" placeholder="First Name" required>
+            <input type="text" id="last-name" placeholder="Last Name" required>
+
+            <label for="birth-date">Date of Birth:</label>
+            <input type="date" id="birth-date" required>
+            <span id="age-error" class="error-message"></span>
+            <input type="email" id="email" placeholder="Email" required>
+            <label for="confirm-email">Confirm Email:</label>
+            <input type="email" id="confirm-email" placeholder="Confirm Email" required>
+            <span id="email-error" class="error-message"></span>
+            
+            <input type="tel" id="phone" placeholder="Phone" required pattern="[6-9][0-9]{8}" maxlength="9">
+            <span id="phone-error" class="error-message"></span>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Password" required>
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            
+            <div id="address-field">
+                <input type="text" id="address" placeholder="Address (Street, City)">
+                <input type="text" id="address-details" placeholder="Apt, floor, building..." class="address-extra-info">
+            </div>
+
+            <button type="submit" class="action-button">Register</button>
+        </form>
+    </div>
+    <script src="register.js"></script>
+</body>
+</html>

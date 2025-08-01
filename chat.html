@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation - Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container chat-container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Home"></a>
+                <h1>Virtual Assistant</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout">
+                </a>
+            </div>
+        </header>
+        <main id="chat-window" class="chat-window">
+            <!-- Messages will be appended here -->
+        </main>
+        <footer class="chat-footer">
+            <form id="chat-form">
+                <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off" required>
+                <button type="submit">Send</button>
+            </form>
+        </footer>
+    </div>
+    <script src="chat.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

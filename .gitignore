@@ -1,0 +1,11 @@
+# Dependencies
+/node_modules
+
+# Database
+vecinia.db
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
