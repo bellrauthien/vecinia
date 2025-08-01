@@ -19,12 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
+                const user = await response.json();
                 // Store user info in localStorage
-                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('user', JSON.stringify(user));
 
                 // Redirect based on profile type
-                if (data.user.profileType === 'volunteer') {
+                if (user.profileType === 'volunteer') {
                     window.location.href = 'volunteer_dashboard.html';
                 } else {
                     window.location.href = 'index.html';

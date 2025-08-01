@@ -8,16 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fetchAndDisplayRequests = async () => {
-        // Check if the volunteer has set their province
+        // Check if the volunteer has their province
         if (!user.province) {
             requestsContainer.innerHTML = '<p>Please <a href="volunteer_profile.html">set your province</a> in your profile to see available requests.</p>';
             return;
         }
 
+        console.log(`Fetching requests for province: ${user.province}`); // Log para depuración
         try {
             const response = await fetch(`/api/requests/pending?province=${user.province}`);
             if (response.ok) {
                 const requests = await response.json();
+                console.log('Received requests:', requests); // Log para depuración
                 requestsContainer.innerHTML = ''; // Clear previous content
 
                 if (requests.length === 0) {

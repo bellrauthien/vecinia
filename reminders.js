@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         reminders.forEach(reminder => {
             const li = document.createElement('li');
             li.classList.add('reminder-item-simple');
+            li.dataset.id = reminder.id; // Store reminder ID
+
             li.innerHTML = `
                 <div>
                     <strong class="reminder-type-tag">${reminder.type.replace('-', ' ')}</strong>
@@ -25,6 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <span>${new Date(reminder.date).toLocaleDateString()} at ${reminder.time}</span>
             `;
+
+            // Make the entire list item clickable
+            li.addEventListener('click', () => {
+                window.location.href = `new_reminder.html?id=${reminder.id}`;
+            });
+
             remindersList.appendChild(li);
         });
     };

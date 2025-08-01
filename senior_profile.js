@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const profileForm = document.getElementById('senior-profile-form');
+    const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user) {
@@ -17,6 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('address').value = profile.address || '';
                 document.getElementById('about_me').value = profile.about_me || '';
+
+                // Display last login date
+                if (profile.last_login_date) {
+                    const lastLoginDate = new Date(profile.last_login_date);
+                    document.getElementById('last-login').value = lastLoginDate.toLocaleString();
+                } else {
+                    document.getElementById('last-login').value = 'Never';
+                }
             } else {
                 console.error('Failed to load profile data');
             }
@@ -28,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission
     profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        messageContainer.textContent = ''; // Clear previous messages
 
         const updatedProfile = {
             userId: user.id,
@@ -47,13 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                alert('Profile updated successfully!');
+                messageContainer.textContent = 'Profile updated successfully!';
+                messageContainer.className = 'message-container success';
             } else {
-                alert('Failed to update profile.');
+                messageContainer.textContent = 'Failed to update profile.';
+                messageContainer.className = 'message-container error';
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('An error occurred while updating the profile.');
+            messageContainer.textContent = 'An error occurred while updating the profile.';
+            messageContainer.className = 'message-container error';
+        } finally {
+            setTimeout(() => {
+                messageContainer.textContent = '';
+                messageContainer.className = 'message-container';
+            }, 3000);
         }
     });
 

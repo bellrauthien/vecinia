@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const app = express();
-const port = 3000;
+const port = 3002;
 
 // Check for API key (Temporarily disabled)
 /*
@@ -49,7 +49,8 @@ db.serialize(() => {
         availability TEXT,
         province TEXT,
         about_me TEXT,
-        birthDate TEXT
+        birthDate TEXT,
+        last_login_date TEXT
     )`);
 
     // Reminders table
@@ -66,6 +67,23 @@ db.serialize(() => {
         needs_volunteer BOOLEAN DEFAULT 0,
         userId INTEGER
     )`);
+});
+
+// Simple migration to add last_login_date column if it doesn't exist
+db.all("PRAGMA table_info(users)", (err, columns) => {
+    if (err) {
+        console.error("Error checking users table info:", err);
+        return;
+    }
+    const hasColumn = columns.some(column => column.name === 'last_login_date');
+    if (!hasColumn) {
+        console.log("Adding 'last_login_date' column to 'users' table.");
+        db.run("ALTER TABLE users ADD COLUMN last_login_date TEXT", (alterErr) => {
+            if (alterErr) {
+                console.error("Error adding column:", alterErr);
+            }
+        });
+    }
 });
 
 
@@ -131,7 +149,17 @@ app.post('/api/login', (req, res) => {
 
         const match = await bcrypt.compare(password, user.password);
         if (match) {
-            res.json({ message: 'Login successful!', user: { id: user.id, firstName: user.firstName, profileType: user.profileType } });
+            // Successful login, update last login date
+            const lastLoginDate = new Date().toISOString();
+            const updateSql = 'UPDATE users SET last_login_date = ? WHERE id = ?';
+            db.run(updateSql, [lastLoginDate, user.id], (updateErr) => {
+                if (updateErr) {
+                    console.error('Failed to update last login date:', updateErr);
+                    // Non-critical error, so we can still proceed with login
+                }
+                const { password, ...userWithoutPassword } = user;
+                res.json({ ...userWithoutPassword, last_login_date: lastLoginDate });
+            });
         } else {
             res.status(400).json({ error: 'Invalid credentials.' });
         }
@@ -153,6 +181,28 @@ app.get('/api/user/profile/:userId', (req, res) => {
                 // Ensure skills is always an array for volunteers
                 skills: row.skills ? row.skills.split(',') : []
             });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    });
+});
+
+// Endpoint to get user profile by ID
+app.get('/api/user/profile/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'SELECT id, firstName, lastName, email, profileType, address, phone, skills, availability, province, about_me, birthDate, last_login_date FROM users WHERE id = ?';
+    db.get(sql, [id], (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching user profile' });
+        }
+        if (user) {
+            // Ensure skills is always an array for volunteers
+            if (user.profileType === 'volunteer' && user.skills) {
+                user.skills = user.skills.split(',');
+            } else if (user.profileType === 'volunteer' && !user.skills) {
+                user.skills = [];
+            }
+            res.json(user);
         } else {
             res.status(404).json({ error: 'User not found' });
         }
@@ -211,6 +261,47 @@ app.get('/api/reminders', (req, res) => {
     });
 });
 
+// Endpoint to get a single reminder by ID
+app.get('/api/reminders/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'SELECT * FROM reminders WHERE id = ?';
+    db.get(sql, [id], (err, row) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching reminder' });
+        }
+        if (row) {
+            res.json(row);
+        } else {
+            res.status(404).json({ error: 'Reminder not found' });
+        }
+    });
+});
+
+// Endpoint to update a reminder
+app.put('/api/reminders/:id', (req, res) => {
+    const { id } = req.params;
+    const { note, type, date, time, address, province, needs_volunteer } = req.body;
+    const sql = `UPDATE reminders SET 
+        note = ?,
+        type = ?,
+        date = ?,
+        time = ?,
+        address = ?,
+        province = ?,
+        needs_volunteer = ?
+        WHERE id = ?`;
+
+    db.run(sql, [note, type, date, time, address, province, needs_volunteer, id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error updating reminder' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Reminder not found' });
+        }
+        res.json({ message: 'Reminder updated successfully' });
+    });
+});
+
 app.post('/api/reminders', (req, res) => {
     const { note, type, date, time, address, province, userId, needs_volunteer } = req.body;
     const sql = 'INSERT INTO reminders (note, type, date, time, address, province, userId, needs_volunteer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
@@ -224,13 +315,9 @@ app.post('/api/reminders', (req, res) => {
 });
 
 app.get('/api/requests/pending', (req, res) => {
-    const { province } = req.query;
-    if (!province) {
-        return res.status(400).json({ error: 'Province is required' });
-    }
-
-    const sql = "SELECT * FROM reminders WHERE status = 'pending' AND province = ? AND needs_volunteer = 1 ORDER BY date, time";
-    db.all(sql, [province], (err, rows) => {
+    // The query is now hardcoded to fetch pending reminders from Madrid
+    const sql = "SELECT * FROM reminders WHERE province = 'Madrid' AND status = 'pending' ORDER BY date, time";
+    db.all(sql, [], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching requests' });
         }

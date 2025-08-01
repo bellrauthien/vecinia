@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const profileForm = document.getElementById('profile-form');
+    const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (!user) {
@@ -16,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('province').value = profile.province || '';
 
+                // Display last login date
+                if (profile.last_login_date) {
+                    const lastLoginDate = new Date(profile.last_login_date);
+                    document.getElementById('last-login').value = lastLoginDate.toLocaleString();
+                } else {
+                    document.getElementById('last-login').value = 'Never';
+                }
+
                 // Set availability
                 if (profile.availability) {
                     document.querySelector(`input[name="availability"][value="${profile.availability}"]`).checked = true;
@@ -24,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Set skills
                 const skillCheckboxes = document.querySelectorAll('input[name="skills"]');
                 skillCheckboxes.forEach(checkbox => {
-                    if (profile.skills.includes(checkbox.value)) {
+                    if (profile.skills && profile.skills.includes(checkbox.value)) {
                         checkbox.checked = true;
                     }
                 });
@@ -37,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle form submission
     profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        messageContainer.textContent = ''; // Clear previous messages
 
         const selectedSkills = Array.from(document.querySelectorAll('input[name="skills"]:checked')).map(cb => cb.value);
         const selectedAvailability = document.querySelector('input[name="availability"]:checked')?.value;
@@ -59,13 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                alert('Profile updated successfully!');
+                messageContainer.textContent = 'Profile updated successfully!';
+                messageContainer.className = 'message-container success';
             } else {
-                alert('Failed to update profile.');
+                messageContainer.textContent = 'Failed to update profile.';
+                messageContainer.className = 'message-container error';
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('An error occurred while updating the profile.');
+            messageContainer.textContent = 'An error occurred while updating the profile.';
+            messageContainer.className = 'message-container error';
+        } finally {
+            setTimeout(() => {
+                messageContainer.textContent = '';
+                messageContainer.className = 'message-container';
+            }, 3000);
         }
     });
 
