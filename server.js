@@ -248,7 +248,22 @@ app.get('/api/reminders', (req, res) => {
         return res.status(400).json({ error: 'User ID is required' });
     }
 
-    const sql = 'SELECT * FROM reminders WHERE userId = ? ORDER BY date, time';
+    const sql = `
+        SELECT r.*, 
+               CASE WHEN r.volunteerId IS NOT NULL THEN 
+                 (SELECT firstName || ' ' || lastName FROM users WHERE id = r.volunteerId) 
+               ELSE NULL END as volunteerName,
+               CASE WHEN r.volunteerId IS NOT NULL THEN 
+                 (SELECT phone FROM users WHERE id = r.volunteerId) 
+               ELSE NULL END as volunteerPhone,
+               CASE WHEN r.volunteerId IS NOT NULL THEN 'accepted' 
+                    WHEN r.needs_volunteer = 1 THEN 'pending' 
+                    ELSE 'no_volunteer_needed' END as requestStatus
+        FROM reminders r
+        WHERE r.userId = ? 
+        ORDER BY r.date, r.time
+    `;
+    
     db.all(sql, [userId], (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -258,13 +273,23 @@ app.get('/api/reminders', (req, res) => {
     });
 });
 
-// Endpoint to get a single reminder by ID, including senior's name
+// Endpoint to get a single reminder by ID, including senior's name and volunteer's info if available
 app.get('/api/reminders/:id', (req, res) => {
     const { id } = req.params;
     const sql = `
-        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName, u.phone as seniorPhone
+        SELECT r.*, 
+               u.firstName as seniorFirstName, 
+               u.lastName as seniorLastName, 
+               u.phone as seniorPhone,
+               v.firstName as volunteerFirstName,
+               v.lastName as volunteerLastName,
+               v.phone as volunteerPhone,
+               CASE WHEN r.volunteerId IS NOT NULL THEN 'accepted' 
+                    WHEN r.needs_volunteer = 1 THEN 'pending' 
+                    ELSE 'no_volunteer_needed' END as requestStatus
         FROM reminders r
         JOIN users u ON r.userId = u.id
+        LEFT JOIN users v ON r.volunteerId = v.id
         WHERE r.id = ?
     `;
     db.get(sql, [id], (err, row) => {
@@ -317,6 +342,21 @@ app.post('/api/reminders', (req, res) => {
             return;
         }
         res.json({ id: this.lastID, ...req.body });
+    });
+});
+
+// Endpoint to delete a reminder
+app.delete('/api/reminders/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM reminders WHERE id = ?';
+    db.run(sql, [id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error deleting reminder' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Reminder not found' });
+        }
+        res.json({ message: 'Reminder deleted successfully' });
     });
 });
 

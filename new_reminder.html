@@ -99,9 +99,25 @@
                     <input type="checkbox" id="needs-volunteer" name="needs-volunteer">
                     <label for="needs-volunteer">I need a volunteer for this task</label>
                 </div>
+                
+                <!-- Sección para mostrar información del voluntario y estado de la solicitud -->
+                <div id="volunteer-info-section" style="display: none;" class="volunteer-info-section">
+                    <div class="status-container">
+                        <h3>Estado de la solicitud:</h3>
+                        <span id="request-status" class="status-badge"></span>
+                    </div>
+                    <div id="volunteer-details" class="volunteer-details">
+                        <h3>Información del voluntario:</h3>
+                        <p id="volunteer-name"></p>
+                        <p id="volunteer-phone"></p>
+                    </div>
+                </div>
 
                 <div id="message-container" class="message-container"></div>
-                <button type="submit" class="action-button">Save Reminder</button>
+                <div class="button-container">
+                    <button type="submit" class="action-button">Save Reminder</button>
+                    <button type="button" id="delete-button" class="delete-action-button" style="display: none;">Delete Reminder</button>
+                </div>
             </form>
         </main>
     </div>
