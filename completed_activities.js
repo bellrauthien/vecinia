@@ -213,9 +213,10 @@ async function checkAndShowRatingForm(reminder, userId, container) {
                 ratedId,
                 userRole,
                 () => {
-                    // Recargar las actividades después de enviar la calificación
+                    // Reemplazar el contenido de la sección de calificación con un mensaje de éxito
+                    // en lugar de recargar todas las actividades
                     setTimeout(() => {
-                        loadCompletedActivities(userId);
+                        container.innerHTML = '<div class="rated-message"><p>Rating submitted successfully!</p></div>';
                     }, 2000);
                 }
             );

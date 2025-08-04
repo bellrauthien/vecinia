@@ -265,6 +265,8 @@ app.get('/api/reminders', (req, res) => {
         return res.status(400).json({ error: 'User ID is required' });
     }
 
+    console.log('[DEBUG] GET /api/reminders - Fetching reminders for userId:', userId);
+
     const sql = `
         SELECT r.*, 
                CASE WHEN r.volunteerId IS NOT NULL THEN 
@@ -288,14 +290,34 @@ app.get('/api/reminders', (req, res) => {
         ORDER BY r.date, r.time
     `;
     
-    console.log('Fetching reminders for userId:', userId);
+    console.log('[DEBUG] SQL query:', sql.replace(/\s+/g, ' ').trim());
+    
     db.all(sql, [userId], (err, rows) => {
         if (err) {
-            console.error('Error fetching reminders:', err);
+            console.error('[DEBUG] Error fetching reminders:', err);
             res.status(500).json({ error: err.message });
             return;
         }
-        console.log('Reminders fetched successfully:', rows.length);
+        
+        console.log('[DEBUG] Reminders fetched successfully. Total count:', rows.length);
+        
+        // Analizar cada recordatorio para depuración
+        rows.forEach(row => {
+            console.log('[DEBUG] Reminder ID:', row.id, 
+                      'Status:', row.status, 
+                      'RequestStatus:', row.requestStatus, 
+                      'Completed:', row.completed, 
+                      'VolunteerId:', row.volunteerId, 
+                      'Needs_volunteer:', row.needs_volunteer);
+        });
+        
+        // Contar recordatorios por tipo para depuración
+        const pendingCount = rows.filter(r => r.requestStatus === 'pending').length;
+        const acceptedCount = rows.filter(r => r.requestStatus === 'accepted').length;
+        const completedCount = rows.filter(r => r.completed === 1).length;
+        
+        console.log('[DEBUG] Counts - Pending:', pendingCount, 'Accepted:', acceptedCount, 'Completed:', completedCount);
+        
         res.json(rows);
     });
 });
@@ -366,13 +388,53 @@ app.put('/api/reminders/:id', (req, res) => {
 app.post('/api/reminders', (req, res) => {
     const { note, type, date, time, address = null, province, userId, needs_volunteer } = req.body; // address is now optional
     const needsVolunteerInt = needs_volunteer ? 1 : 0; // Convert boolean to integer
-    const sql = 'INSERT INTO reminders (note, type, date, time, address, province, userId, needs_volunteer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    db.run(sql, [note, type, date, time, address, province, userId, needsVolunteerInt], function(err) {
+    
+    console.log('[DEBUG] Creating new reminder:', { note, type, date, time, province, userId, needs_volunteer: needsVolunteerInt });
+    
+    // Verificar los valores por defecto que se establecerán automáticamente
+    console.log('[DEBUG] Valores por defecto en la definición de la tabla:');
+    console.log('[DEBUG] - status: "pending" (DEFAULT "pending")');
+    console.log('[DEBUG] - completed: 0 (DEFAULT 0)');
+    console.log('[DEBUG] - volunteerId: null (no tiene valor por defecto)');
+    
+    // Consulta SQL para obtener los valores por defecto actuales
+    db.all("PRAGMA table_info(reminders)", (err, columns) => {
         if (err) {
-            res.status(500).json({ error: err.message });
-            return;
+            console.error('[DEBUG] Error al obtener estructura de tabla:', err);
+        } else {
+            console.log('[DEBUG] Columnas y valores por defecto:');
+            columns.forEach(col => {
+                console.log(`[DEBUG] - ${col.name}: ${col.dflt_value || 'NULL'}`);
+            });
         }
-        res.json({ id: this.lastID, ...req.body });
+        
+        // Continuar con la inserción normal
+        const sql = 'INSERT INTO reminders (note, type, date, time, address, province, userId, needs_volunteer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        console.log('[DEBUG] SQL query:', sql);
+        console.log('[DEBUG] SQL params:', [note, type, date, time, address, province, userId, needsVolunteerInt]);
+        
+        db.run(sql, [note, type, date, time, address, province, userId, needsVolunteerInt], function(err) {
+            if (err) {
+                console.error('[DEBUG] Error creating reminder:', err);
+                res.status(500).json({ error: err.message });
+                return;
+            }
+            
+            console.log('[DEBUG] Reminder created successfully with ID:', this.lastID);
+            
+            // Obtener el recordatorio recién creado para verificar los valores reales
+            db.get('SELECT * FROM reminders WHERE id = ?', [this.lastID], (err, newReminder) => {
+                if (err) {
+                    console.error('[DEBUG] Error al obtener el recordatorio recién creado:', err);
+                } else {
+                    console.log('[DEBUG] Recordatorio recién creado con valores reales:');
+                    console.log(newReminder);
+                }
+                
+                console.log('[DEBUG] Response payload:', { id: this.lastID, ...req.body });
+                res.json({ id: this.lastID, ...req.body });
+            });
+        });
     });
 });
 
@@ -547,6 +609,39 @@ app.post('/api/ratings', (req, res) => {
                     
                     res.json({ id: this.lastID, message: 'Rating submitted successfully' });
                 });
+            });
+        });
+    });
+});
+
+// Endpoint de depuración para examinar la estructura de la tabla de recordatorios
+app.get('/api/debug/reminders-structure', (req, res) => {
+    console.log('[DEBUG] Examinando estructura de la tabla reminders');
+    
+    // Obtener información sobre las columnas de la tabla
+    db.all("PRAGMA table_info(reminders)", (err, columns) => {
+        if (err) {
+            console.error('[DEBUG] Error al obtener estructura de tabla:', err);
+            return res.status(500).json({ error: 'Error al obtener estructura de tabla' });
+        }
+        
+        console.log('[DEBUG] Estructura de la tabla reminders:');
+        console.log(columns);
+        
+        // Obtener algunos registros de ejemplo
+        db.all("SELECT * FROM reminders LIMIT 5", (err, rows) => {
+            if (err) {
+                console.error('[DEBUG] Error al obtener registros de ejemplo:', err);
+                return res.status(500).json({ error: 'Error al obtener registros de ejemplo' });
+            }
+            
+            console.log('[DEBUG] Registros de ejemplo:');
+            console.log(rows);
+            
+            // Devolver toda la información de depuración
+            res.json({
+                tableStructure: columns,
+                sampleRecords: rows
             });
         });
     });
