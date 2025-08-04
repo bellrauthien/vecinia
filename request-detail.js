@@ -1,5 +1,41 @@
+// Función para verificar si el usuario puede calificar y mostrar el formulario de calificación
+async function checkAndShowRatingForm(reminder, userId, container) {
+    try {
+        const canRateResponse = await canUserRateReminder(reminder.id, userId);
+        
+        if (canRateResponse.canRate) {
+            container.style.display = 'block';
+            
+            // Determinar a quién está calificando el usuario
+            const ratedId = canRateResponse.ratedId;
+            const userRole = canRateResponse.userRole;
+            
+            // Crear y mostrar el formulario de calificación
+            const ratingForm = createRatingForm(
+                reminder.id,
+                userId,
+                ratedId,
+                userRole,
+                () => {
+                    // Recargar la página después de enviar la calificación
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+            );
+            
+            container.appendChild(ratingForm);
+        }
+    } catch (error) {
+        console.error('Error checking rating eligibility:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const detailsContainer = document.getElementById('request-details-container');
+    const seniorRatingContainer = document.getElementById('senior-rating-container');
+    const completeSection = document.getElementById('complete-section');
+    const ratingSection = document.getElementById('rating-section');
     const acceptButton = document.getElementById('accept-request-button');
     const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -33,10 +69,38 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p><strong>Time:</strong> ${request.time}</p>
                     <p><strong>Province:</strong> ${request.province}</p>
                 `;
+                
+                // Mostrar la calificación del senior
+                if (request.seniorRating > 0) {
+                    const ratingDiv = document.createElement('div');
+                    ratingDiv.className = 'user-rating-badge';
+                    ratingDiv.innerHTML = '<strong>Calificación del senior:</strong> ';
+                    ratingDiv.appendChild(createRatingStars(request.seniorRating, request.seniorRatingCount));
+                    seniorRatingContainer.appendChild(ratingDiv);
+                }
 
                 if (request.status === 'accepted' || request.volunteerId) {
-                    acceptButton.textContent = 'Already Accepted';
-                    acceptButton.disabled = true;
+                    // Si ya está aceptado por este voluntario
+                    if (request.volunteerId == user.id) {
+                        acceptButton.textContent = 'You have accepted this request';
+                        acceptButton.disabled = true;
+                        
+                        // Manejar el estado completado/no completado
+                        if (request.completed === 1) {
+                            // Si está completado, verificar si el usuario puede calificar
+                            checkAndShowRatingForm(request, user.id, ratingSection);
+                        } else {
+                            // Si no está completado, mostrar botón para marcar como completado
+                            completeSection.style.display = 'block';
+                            completeSection.appendChild(createCompleteButton(request.id, () => {
+                                // Recargar la página para mostrar la opción de calificar
+                                window.location.reload();
+                            }));
+                        }
+                    } else {
+                        acceptButton.textContent = 'Already Accepted by Another Volunteer';
+                        acceptButton.disabled = true;
+                    }
                 }
 
             } else {

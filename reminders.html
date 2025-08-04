@@ -22,12 +22,26 @@
         <main>
             <a href="new_reminder.html" class="action-button new-reminder-button">+ New Reminder</a>
             <div class="reminders-list-container">
-                <h2>My Appointments</h2>
-                <ul id="reminders-list"></ul>
+                <div class="reminders-section">
+                    <h2>Pending Appointments</h2>
+                    <ul id="pending-reminders-list" class="reminders-list"></ul>
+                </div>
+                
+                <div class="reminders-section">
+                    <h2>Accepted Appointments</h2>
+                    <ul id="accepted-reminders-list" class="reminders-list"></ul>
+                </div>
+                
+                <div class="reminders-section">
+                    <h2>Completed Appointments</h2>
+                    <ul id="completed-reminders-list" class="reminders-list"></ul>
+                    <a href="completed_history.html" class="show-more-link">View All Completed Appointments</a>
+                </div>
             </div>
         </main>
     </div>
     <script src="reminders.js"></script>
     <script src="auth.js"></script>
+    <script src="simple-show-more.js"></script>
 </body>
 </html>

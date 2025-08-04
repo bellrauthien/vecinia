@@ -1,3 +1,36 @@
+// Función para verificar si el usuario puede calificar y mostrar el formulario de calificación
+async function checkAndShowRatingForm(reminder, userId, container) {
+    try {
+        const canRateResponse = await canUserRateReminder(reminder.id, userId);
+        
+        if (canRateResponse.canRate) {
+            container.style.display = 'block';
+            
+            // Determinar a quién está calificando el usuario
+            const ratedId = canRateResponse.ratedId;
+            const userRole = canRateResponse.userRole;
+            
+            // Crear y mostrar el formulario de calificación
+            const ratingForm = createRatingForm(
+                reminder.id,
+                userId,
+                ratedId,
+                userRole,
+                () => {
+                    // Recargar la página después de enviar la calificación
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                }
+            );
+            
+            container.appendChild(ratingForm);
+        }
+    } catch (error) {
+        console.error('Error checking rating eligibility:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const newReminderForm = document.getElementById('new-reminder-form');
     const user = JSON.parse(localStorage.getItem('user'));
@@ -61,31 +94,75 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const requestStatus = document.getElementById('request-status');
                     const volunteerName = document.getElementById('volunteer-name');
                     const volunteerPhone = document.getElementById('volunteer-phone');
+                    const volunteerRatingContainer = document.getElementById('volunteer-rating-container');
+                    const completeSection = document.getElementById('complete-section');
+                    const ratingSection = document.getElementById('rating-section');
                     
                     volunteerInfoSection.style.display = 'block';
                     
                     // Mostrar el estado de la solicitud
                     if (reminder.volunteerId) {
-                        requestStatus.textContent = 'Aceptado';
-                        requestStatus.className = 'status-badge accepted';
+                        // Verificar si el recordatorio está completado
+                        if (reminder.completed === 1) {
+                            requestStatus.textContent = 'Completado';
+                            requestStatus.className = 'status-badge completed';
+                        } else {
+                            requestStatus.textContent = 'Aceptado';
+                            requestStatus.className = 'status-badge accepted';
+                            
+                            // Si el usuario es el senior o el voluntario, mostrar botón para marcar como completado
+                            if (user.id == reminder.userId || user.id == reminder.volunteerId) {
+                                completeSection.style.display = 'block';
+                                completeSection.appendChild(createCompleteButton(reminder.id, () => {
+                                    // Recargar la página para mostrar la opción de calificar
+                                    window.location.reload();
+                                }));
+                            }
+                        }
                         
                         // Mostrar información del voluntario
-                        if (reminder.seniorFirstName && reminder.seniorLastName) {
-                            // Si estamos viendo desde la API de recordatorios individuales
-                            volunteerName.textContent = `Nombre: ${reminder.volunteerFirstName || ''} ${reminder.volunteerLastName || ''}`;
-                            volunteerPhone.textContent = reminder.volunteerPhone ? `Teléfono: ${reminder.volunteerPhone}` : '';
-                        } else {
-                            // Necesitamos obtener la información del voluntario
-                            try {
-                                const volunteerResponse = await fetch(`/api/user/profile/${reminder.volunteerId}`);
-                                if (volunteerResponse.ok) {
-                                    const volunteer = await volunteerResponse.json();
-                                    volunteerName.textContent = `Nombre: ${volunteer.firstName} ${volunteer.lastName}`;
-                                    volunteerPhone.textContent = volunteer.phone ? `Teléfono: ${volunteer.phone}` : '';
-                                }
-                            } catch (error) {
-                                console.error('Error fetching volunteer info:', error);
-                            }
+                        volunteerName.textContent = `Nombre: ${reminder.volunteerFirstName || ''} ${reminder.volunteerLastName || ''}`;
+                        volunteerPhone.textContent = reminder.volunteerPhone ? `Teléfono: ${reminder.volunteerPhone}` : '';
+                        
+                        // Mostrar calificación del voluntario si tiene
+                        if (reminder.volunteerRating > 0) {
+                            const ratingDiv = document.createElement('div');
+                            ratingDiv.className = 'user-rating-badge';
+                            ratingDiv.appendChild(createRatingStars(reminder.volunteerRating, reminder.volunteerRatingCount));
+                            volunteerRatingContainer.appendChild(ratingDiv);
+                        }
+                        
+                        // Si el recordatorio está completado, verificar si el usuario puede calificar
+                        if (reminder.completed) {
+                            // Verificar si el usuario ya ha calificado este recordatorio
+                            fetch(`/api/reminders/${reminder.id}/can-rate?userId=${user.id}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (!data.canRate && data.hasRated) {
+                                        // El usuario ya ha calificado, deshabilitar los botones
+                                        const updateButton = document.querySelector('.action-button');
+                                        const deleteButton = document.getElementById('delete-button');
+                                        
+                                        if (updateButton) {
+                                            updateButton.disabled = true;
+                                            updateButton.style.opacity = '0.5';
+                                            updateButton.style.cursor = 'not-allowed';
+                                        }
+                                        
+                                        if (deleteButton) {
+                                            deleteButton.disabled = true;
+                                            deleteButton.style.display = 'none';
+                                        }
+                                    } else {
+                                        // El usuario puede calificar, mostrar el formulario
+                                        checkAndShowRatingForm(reminder, user.id, ratingSection);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error verificando si puede calificar:', error);
+                                    // En caso de error, intentar mostrar el formulario de calificación
+                                    checkAndShowRatingForm(reminder, user.id, ratingSection);
+                                });
                         }
                     } else {
                         requestStatus.textContent = 'Pendiente';

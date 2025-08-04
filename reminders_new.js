@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Estado para controlar la visibilidad de los recordatorios completados
     let showAllCompleted = false;
     const MAX_VISIBLE_COMPLETED = 3; // Número máximo de recordatorios completados visibles inicialmente
+    
+    // Configurar el evento para el botón "Show More"
+    showMoreButton.addEventListener('click', () => {
+        showAllCompleted = !showAllCompleted;
+        fetchReminders(); // Volver a renderizar los recordatorios con el nuevo estado
+    });
 
     if (!user) {
         window.location.href = 'login.html';
@@ -183,21 +189,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // Ordenar recordatorios completados por fecha (más recientes primero)
-        completedReminders.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
         // Mostrar mensaje si no hay recordatorios completados
         if (completedReminders.length === 0) {
             completedRemindersList.innerHTML = '<li><p>No completed appointments.</p></li>';
             showMoreButton.style.display = 'none';
         } else {
-            // Guardar todos los recordatorios completados como atributos de datos en el contenedor
-            completedRemindersList.dataset.totalReminders = JSON.stringify(completedReminders);
+            // Ordenar recordatorios completados por fecha (más recientes primero)
+            completedReminders.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Inicialmente, mostrar solo los primeros MAX_VISIBLE_COMPLETED recordatorios
-            const initialVisible = Math.min(MAX_VISIBLE_COMPLETED, completedReminders.length);
+            // Determinar cuántos recordatorios completados mostrar
+            const visibleCount = showAllCompleted ? completedReminders.length : Math.min(MAX_VISIBLE_COMPLETED, completedReminders.length);
             
-            for (let i = 0; i < initialVisible; i++) {
+            // Renderizar recordatorios completados visibles
+            for (let i = 0; i < visibleCount; i++) {
                 const li = createReminderItem(completedReminders[i]);
                 completedRemindersList.appendChild(li);
             }
@@ -205,13 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Mostrar u ocultar el botón "Show More" según sea necesario
             if (completedReminders.length > MAX_VISIBLE_COMPLETED) {
                 showMoreButton.style.display = 'block';
-                showMoreButton.textContent = `Show More (${completedReminders.length - MAX_VISIBLE_COMPLETED} more)`;
-                
-                // Mostrar solo los 3 recordatorios completados más recientes
-                for (let i = 0; i < Math.min(MAX_VISIBLE_COMPLETED, completedReminders.length); i++) {
-                    const li = createReminderItem(completedReminders[i]);
-                    completedRemindersList.appendChild(li);
-                }
+                showMoreButton.textContent = showAllCompleted ? 'Show Less' : `Show More (${completedReminders.length - MAX_VISIBLE_COMPLETED} more)`;
             } else {
                 showMoreButton.style.display = 'none';
             }

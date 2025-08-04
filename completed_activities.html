@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Activities - VecinAI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="volunteer_dashboard.html" class="home-button"><img src="assets/home-icon.png" alt="Dashboard"></a>
+                <h1>Completed Activities</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout">
+                </a>
+            </div>
+        </header>
+        <main>
+            <div class="completed-activities-section">
+                <p class="section-description">Here you can rate seniors after completing activities with them.</p>
+                <div id="completed-activities-container" class="activities-list">
+                    <p id="loading-message">Loading completed activities...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="auth.js"></script>
+    <script src="notifications.js"></script>
+    <script src="completed_activities.js"></script>
+</body>
+</html>

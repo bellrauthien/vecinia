@@ -57,7 +57,9 @@ db.serialize(() => {
         province TEXT,
         about_me TEXT,
         birthDate TEXT,
-        last_login_date TEXT
+        last_login_date TEXT,
+        rating REAL DEFAULT 0,
+        rating_count INTEGER DEFAULT 0
     )`);
 
     // Reminders table
@@ -72,7 +74,22 @@ db.serialize(() => {
         status TEXT DEFAULT 'pending',
         province TEXT,
         needs_volunteer BOOLEAN DEFAULT 0,
-        userId INTEGER
+        userId INTEGER,
+        completed BOOLEAN DEFAULT 0
+    )`);
+    
+    // Ratings table
+    db.run(`CREATE TABLE IF NOT EXISTS ratings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        reminderId INTEGER NOT NULL,
+        raterId INTEGER NOT NULL,
+        ratedId INTEGER NOT NULL,
+        score INTEGER NOT NULL,
+        comment TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (reminderId) REFERENCES reminders(id),
+        FOREIGN KEY (raterId) REFERENCES users(id),
+        FOREIGN KEY (ratedId) REFERENCES users(id)
     )`);
 });
 
@@ -181,7 +198,7 @@ app.post('/api/login', (req, res) => {
 // Endpoint to get user profile by ID
 app.get('/api/user/profile/:id', (req, res) => {
     const { id } = req.params;
-    const sql = 'SELECT id, firstName, lastName, email, profileType, address, phone, skills, availability, province, about_me, birthDate, last_login_date FROM users WHERE id = ?';
+    const sql = 'SELECT id, firstName, lastName, email, profileType, address, phone, skills, availability, province, about_me, birthDate, last_login_date, rating, rating_count FROM users WHERE id = ?';
     db.get(sql, [id], (err, user) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching user profile' });
@@ -256,19 +273,29 @@ app.get('/api/reminders', (req, res) => {
                CASE WHEN r.volunteerId IS NOT NULL THEN 
                  (SELECT phone FROM users WHERE id = r.volunteerId) 
                ELSE NULL END as volunteerPhone,
+               CASE WHEN r.volunteerId IS NOT NULL THEN 
+                 (SELECT rating FROM users WHERE id = r.volunteerId) 
+               ELSE NULL END as volunteerRating,
+               CASE WHEN r.volunteerId IS NOT NULL THEN 
+                 (SELECT rating_count FROM users WHERE id = r.volunteerId) 
+               ELSE NULL END as volunteerRatingCount,
                CASE WHEN r.volunteerId IS NOT NULL THEN 'accepted' 
                     WHEN r.needs_volunteer = 1 THEN 'pending' 
-                    ELSE 'no_volunteer_needed' END as requestStatus
+                    ELSE 'no_volunteer_needed' END as requestStatus,
+               COALESCE(r.completed, 0) as completed
         FROM reminders r
         WHERE r.userId = ? 
         ORDER BY r.date, r.time
     `;
     
+    console.log('Fetching reminders for userId:', userId);
     db.all(sql, [userId], (err, rows) => {
         if (err) {
+            console.error('Error fetching reminders:', err);
             res.status(500).json({ error: err.message });
             return;
         }
+        console.log('Reminders fetched successfully:', rows.length);
         res.json(rows);
     });
 });
@@ -281,9 +308,13 @@ app.get('/api/reminders/:id', (req, res) => {
                u.firstName as seniorFirstName, 
                u.lastName as seniorLastName, 
                u.phone as seniorPhone,
+               u.rating as seniorRating,
+               u.rating_count as seniorRatingCount,
                v.firstName as volunteerFirstName,
                v.lastName as volunteerLastName,
                v.phone as volunteerPhone,
+               v.rating as volunteerRating,
+               v.rating_count as volunteerRatingCount,
                CASE WHEN r.volunteerId IS NOT NULL THEN 'accepted' 
                     WHEN r.needs_volunteer = 1 THEN 'pending' 
                     ELSE 'no_volunteer_needed' END as requestStatus
@@ -365,7 +396,17 @@ app.get('/api/requests/pending', (req, res) => {
     if (!province) {
         return res.status(400).json({ error: 'Province is required' });
     }
-    const sql = "SELECT * FROM reminders WHERE province = ? AND status = 'pending' ORDER BY date, time";
+    const sql = `
+        SELECT r.*, 
+               u.firstName as seniorFirstName, 
+               u.lastName as seniorLastName,
+               u.rating as seniorRating,
+               u.rating_count as seniorRatingCount
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.province = ? AND r.status = 'pending'
+        ORDER BY r.date, r.time
+    `;
     db.all(sql, [province], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching requests' });
@@ -438,6 +479,235 @@ app.post('/api/requests/accept', (req, res) => {
             return res.status(500).json({ error: 'Error accepting request' });
         }
         res.json({ message: 'Request accepted successfully' });
+    });
+});
+
+// --- Ratings API Endpoints ---
+
+// Endpoint to mark a reminder as completed
+app.post('/api/reminders/:id/complete', (req, res) => {
+    const { id } = req.params;
+    const sql = "UPDATE reminders SET completed = 1, status = 'completed' WHERE id = ?";
+    
+    db.run(sql, [id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: 'Error marking reminder as completed' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Reminder not found' });
+        }
+        res.json({ message: 'Reminder marked as completed successfully' });
+    });
+});
+
+// Endpoint to submit a rating
+app.post('/api/ratings', (req, res) => {
+    const { reminderId, raterId, ratedId, score, comment = '' } = req.body;
+    
+    // Validate score is between 1 and 5
+    if (score < 1 || score > 5) {
+        return res.status(400).json({ error: 'Score must be between 1 and 5' });
+    }
+    
+    const created_at = new Date().toISOString();
+    
+    // First check if this user has already rated this reminder
+    db.get('SELECT id FROM ratings WHERE reminderId = ? AND raterId = ?', [reminderId, raterId], (err, existingRating) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error checking existing rating' });
+        }
+        
+        if (existingRating) {
+            return res.status(400).json({ error: 'You have already rated this reminder' });
+        }
+        
+        // Insert the new rating
+        const sql = 'INSERT INTO ratings (reminderId, raterId, ratedId, score, comment, created_at) VALUES (?, ?, ?, ?, ?, ?)';
+        db.run(sql, [reminderId, raterId, ratedId, score, comment, created_at], function(err) {
+            if (err) {
+                return res.status(500).json({ error: 'Error submitting rating' });
+            }
+            
+            // Update the user's average rating
+            db.get('SELECT AVG(score) as avgScore, COUNT(id) as count FROM ratings WHERE ratedId = ?', [ratedId], (err, result) => {
+                if (err) {
+                    console.error('Error calculating average rating:', err);
+                    // We still return success for the rating submission
+                    return res.json({ id: this.lastID, message: 'Rating submitted successfully' });
+                }
+                
+                const avgScore = result.avgScore || 0;
+                const count = result.count || 0;
+                
+                // Update the user's rating and count
+                db.run('UPDATE users SET rating = ?, rating_count = ? WHERE id = ?', [avgScore, count, ratedId], (err) => {
+                    if (err) {
+                        console.error('Error updating user rating:', err);
+                    }
+                    
+                    res.json({ id: this.lastID, message: 'Rating submitted successfully' });
+                });
+            });
+        });
+    });
+});
+
+// Endpoint to get ratings for a user
+app.get('/api/users/:id/ratings', (req, res) => {
+    const { id } = req.params;
+    
+    const sql = `
+        SELECT r.*, 
+               u.firstName as raterFirstName, 
+               u.lastName as raterLastName,
+               rem.note as reminderNote,
+               rem.type as reminderType,
+               rem.date as reminderDate
+        FROM ratings r
+        JOIN users u ON r.raterId = u.id
+        JOIN reminders rem ON r.reminderId = rem.id
+        WHERE r.ratedId = ?
+        ORDER BY r.created_at DESC
+    `;
+    
+    db.all(sql, [id], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching ratings' });
+        }
+        res.json(rows);
+    });
+});
+
+// Endpoint to get completed reminders for a user
+app.get('/api/reminders/completed', (req, res) => {
+    const { userId } = req.query;
+    
+    console.log('Fetching completed reminders for user ID:', userId);
+    
+    if (!userId) {
+        console.log('Error: User ID is missing');
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    const sql = `
+        SELECT r.*, 
+               u.firstName as volunteerFirstName, 
+               u.lastName as volunteerLastName,
+               u.phone as volunteerPhone,
+               u.rating as volunteerRating,
+               u.rating_count as volunteerRatingCount,
+               CASE 
+                   WHEN u.firstName IS NOT NULL AND u.lastName IS NOT NULL 
+                   THEN u.firstName || ' ' || u.lastName 
+                   ELSE NULL 
+               END as volunteerName
+        FROM reminders r
+        LEFT JOIN users u ON r.volunteerId = u.id
+        WHERE r.userId = ? AND r.completed = 1
+        ORDER BY r.date DESC, r.time DESC
+    `;
+    
+    console.log('Executing SQL query for completed reminders');
+    
+    db.all(sql, [userId], (err, rows) => {
+        if (err) {
+            console.error('Error fetching completed reminders:', err);
+            return res.status(500).json({ error: 'Error fetching completed reminders' });
+        }
+        
+        console.log('Found completed reminders:', rows.length);
+        res.json(rows);
+    });
+});
+
+// Endpoint to get completed reminders for a volunteer
+app.get('/api/volunteer-completed-activities', (req, res) => {
+    const { volunteerId } = req.query;
+    
+    console.log('Fetching completed activities for volunteer ID:', volunteerId);
+    
+    if (!volunteerId) {
+        console.log('Error: Volunteer ID is missing');
+        return res.status(400).json({ error: 'Volunteer ID is required' });
+    }
+    
+    const sql = `
+        SELECT DISTINCT r.id, r.*, 
+               u.firstName as seniorFirstName, 
+               u.lastName as seniorLastName,
+               u.phone as seniorPhone,
+               u.rating as seniorRating,
+               u.rating_count as seniorRatingCount
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.volunteerId = ? AND r.completed = 1
+        ORDER BY r.date DESC, r.time DESC
+    `;
+    
+    console.log('Executing SQL query:', sql);
+    console.log('With volunteerId:', volunteerId);
+    
+    db.all(sql, [volunteerId], (err, rows) => {
+        if (err) {
+            console.error('Error fetching completed reminders:', err);
+            return res.status(500).json({ error: 'Error fetching completed reminders' });
+        }
+        
+        console.log('Found completed activities:', rows.length);
+        console.log('First activity (if any):', rows[0] || 'None');
+        
+        res.json(rows);
+    });
+});
+
+// Endpoint to check if a user can rate a reminder
+app.get('/api/reminders/:id/can-rate', (req, res) => {
+    const { id } = req.params;
+    const { userId } = req.query;
+    
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    // Get the reminder to check if it's completed and if the user is involved
+    db.get('SELECT * FROM reminders WHERE id = ?', [id], (err, reminder) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error checking reminder' });
+        }
+        
+        if (!reminder) {
+            return res.status(404).json({ error: 'Reminder not found' });
+        }
+        
+        // Check if the reminder is completed
+        if (!reminder.completed) {
+            return res.json({ canRate: false, reason: 'Reminder is not completed yet' });
+        }
+        
+        // Check if the user is either the senior or the volunteer
+        if (reminder.userId != userId && reminder.volunteerId != userId) {
+            return res.json({ canRate: false, reason: 'User is not involved in this reminder' });
+        }
+        
+        // Check if the user has already rated this reminder
+        db.get('SELECT id FROM ratings WHERE reminderId = ? AND raterId = ?', [id, userId], (err, rating) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error checking existing rating' });
+            }
+            
+            if (rating) {
+                return res.json({ canRate: false, hasRated: true, reason: 'User has already rated this reminder' });
+            }
+            
+            // Determine who the user would be rating
+            const ratedId = reminder.userId == userId ? reminder.volunteerId : reminder.userId;
+            
+            res.json({ 
+                canRate: true, 
+                ratedId: ratedId,
+                userRole: reminder.userId == userId ? 'senior' : 'volunteer'
+            });
+        });
     });
 });
 

@@ -57,12 +57,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 const el = document.createElement('a');
                 el.href = `request-detail.html?id=${request.id}`;
                 el.className = 'reminder-item-simple-link'; // Use a wrapper class for the link
+                
+                // Crear la información de calificación del senior si está disponible
+                let seniorRatingHtml = '';
+                if (request.seniorRating > 0) {
+                    const ratingStars = [];
+                    const roundedRating = Math.round(request.seniorRating * 2) / 2;
+                    
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= roundedRating) {
+                            ratingStars.push('<span class="rating-star">★</span>');
+                        } else if (i - 0.5 === roundedRating) {
+                            ratingStars.push('<span class="rating-star" style="opacity: 0.5;">★</span>');
+                        } else {
+                            ratingStars.push('<span class="rating-star empty">★</span>');
+                        }
+                    }
+                    
+                    seniorRatingHtml = `
+                        <div class="senior-info">
+                            <span class="senior-label">Senior:</span>
+                            <span class="senior-name">${request.seniorFirstName} ${request.seniorLastName}</span>
+                            <div class="rating-container">
+                                <div class="rating-stars">${ratingStars.join('')}</div>
+                                <span class="rating-count">(${request.seniorRatingCount})</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    seniorRatingHtml = `
+                        <div class="senior-info">
+                            <span class="senior-label">Senior:</span>
+                            <span class="senior-name">${request.seniorFirstName} ${request.seniorLastName}</span>
+                            <span class="no-rating">(Sin calificaciones)</span>
+                        </div>
+                    `;
+                }
+                
                 el.innerHTML = `
                     <div class="reminder-item-simple">
                         <div>
                             <span class="reminder-type-tag">${request.type}</span>
                             <strong>${request.note}</strong>
                             <p>${new Date(request.date).toLocaleDateString()} at ${request.time}</p>
+                            ${seniorRatingHtml}
                         </div>
                         <span class="view-details-arrow">></span>
                     </div>

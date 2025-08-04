@@ -207,11 +207,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMoreButton.style.display = 'block';
                 showMoreButton.textContent = `Show More (${completedReminders.length - MAX_VISIBLE_COMPLETED} more)`;
                 
-                // Mostrar solo los 3 recordatorios completados más recientes
-                for (let i = 0; i < Math.min(MAX_VISIBLE_COMPLETED, completedReminders.length); i++) {
-                    const li = createReminderItem(completedReminders[i]);
-                    completedRemindersList.appendChild(li);
-                }
+                // Configurar el evento para el botón "Show More"
+                showMoreButton.onclick = function() {
+                    if (this.textContent.includes('Show More')) {
+                        // Mostrar todos los recordatorios completados
+                        completedRemindersList.innerHTML = '';
+                        completedReminders.forEach(reminder => {
+                            const li = createReminderItem(reminder);
+                            completedRemindersList.appendChild(li);
+                        });
+                        this.textContent = 'Show Less';
+                    } else {
+                        // Mostrar solo los primeros MAX_VISIBLE_COMPLETED recordatorios
+                        completedRemindersList.innerHTML = '';
+                        for (let i = 0; i < initialVisible; i++) {
+                            const li = createReminderItem(completedReminders[i]);
+                            completedRemindersList.appendChild(li);
+                        }
+                        this.textContent = `Show More (${completedReminders.length - MAX_VISIBLE_COMPLETED} more)`;
+                    }
+                };
             } else {
                 showMoreButton.style.display = 'none';
             }

@@ -138,6 +138,7 @@ main {
 
 #profile-button { background-color: #795548; }
 #requests-button { background-color: #E67E22; }
+#completed-activities-button { background-color: #4CAF50; /* Verde para actividades completadas */ }
 
 .new-reminder-button {
     background-color: #FFD180; /* Light orange, as requested */
@@ -231,6 +232,11 @@ main {
 
 #accept-request-button { background-color: #28a745; } /* Contrasting green for accept button */
 
+.secondary-button { 
+    background-color: #795548; /* Marrón oscuro para mejor contraste */
+    color: white; /* Texto blanco para mejor legibilidad */
+} 
+
 .simple-form input,
 .simple-form select {
     width: 100%;
@@ -241,8 +247,56 @@ main {
     box-sizing: border-box;
 }
 
-.reminders-list-container h2 { text-align: center; }
-#reminders-list { list-style: none; padding: 0; }
+/* Estilos para las secciones de recordatorios */
+.reminders-section {
+    margin-bottom: 30px;
+    background-color: #FFFDE7;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.reminders-section h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #5D4037;
+    font-size: 1.3em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #FFD180;
+}
+
+.reminders-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilos para el enlace View All Completed Appointments */
+.show-more-link {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #F5F5F5;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+    color: #5D4037;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.show-more-link:hover {
+    background-color: #EEEEEE;
+}
+
+/* Estilo para la sección de completados cuando está colapsada */
+.reminders-list.collapsed {
+    max-height: 600px;
+    overflow: hidden;
+}
 
 .reminder-item-simple.accepted {
     background-color: #f0f0f0;
@@ -514,6 +568,210 @@ main {
 .volunteer-details p {
     margin: 5px 0;
     font-size: 1em;
+}
+
+/* Estilos para las estrellas de calificación */
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Estilos para la sección de actividades completadas */
+.completed-activities-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #FFFDE7;
+    border-radius: 15px;
+}
+
+.completed-activities-section h2 {
+    color: #5D4037;
+    margin-top: 0;
+    text-align: center;
+}
+
+.section-description {
+    text-align: center;
+    color: #795548;
+    margin-bottom: 20px;
+}
+
+.activities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.activity-item {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-left: 5px solid #28a745;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.activity-date {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.activity-details {
+    margin-bottom: 10px;
+}
+
+.senior-info {
+    background-color: #E8F5E9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.rated-message {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.rating-stars {
+    display: flex;
+    margin-right: 10px;
+}
+
+.rating-star {
+    color: #FFD700;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-right: 2px;
+}
+
+.rating-star.empty {
+    color: #E0E0E0;
+}
+
+.rating-count {
+    font-size: 0.9em;
+    color: #757575;
+    margin-left: 5px;
+}
+
+.user-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #FFF8E1;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border: 1px solid #FFD180;
+}
+
+.rating-form {
+    background-color: #F5F5F5;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid #E0E0E0;
+}
+
+.rating-form h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.rating-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #DDD;
+    border-radius: 5px;
+    margin-top: 10px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.rating-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.rating-form button:hover {
+    background-color: #388E3C;
+}
+
+.rating-form button:disabled {
+    background-color: #CCCCCC;
+    cursor: not-allowed;
+}
+
+.rating-list {
+    margin-top: 20px;
+}
+
+.rating-item {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 3px solid #FFD180;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.rating-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.rating-item-user {
+    font-weight: bold;
+}
+
+.rating-item-date {
+    font-size: 0.8em;
+    color: #757575;
+}
+
+.rating-item-comment {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+.complete-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.complete-button:hover {
+    background-color: #388E3C;
+}
+
+.complete-button:disabled {
+    background-color: #CCCCCC;
+    cursor: not-allowed;
 }
 
 /* === Media Queries for Responsiveness === */

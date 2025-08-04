@@ -26,7 +26,7 @@ async function loadCompletedActivities(userId) {
         }
         
         if (activities.length === 0) {
-            container.innerHTML = '<p>No completed activities found.</p>';
+            container.innerHTML = '<p class="no-activities">No completed activities found. When you complete activities with seniors, they will appear here for rating.</p>';
             return;
         }
         
@@ -64,11 +64,11 @@ async function loadCompletedActivities(userId) {
         });
     } catch (error) {
         console.error('Error loading completed activities:', error);
-        container.innerHTML = '<p>Error loading completed activities. Please try again later.</p>';
+        container.innerHTML = '<p class="error-message">Error loading completed activities. Please try again later.</p>';
     }
 }
 
-// Función para verificar si un usuario puede calificar un recordatorio (implementada directamente)
+// Función para verificar si un usuario puede calificar un recordatorio
 async function canUserRateReminder(reminderId, userId) {
     try {
         console.log('Checking if user can rate reminder:', reminderId);
@@ -85,14 +85,14 @@ async function canUserRateReminder(reminderId, userId) {
     }
 }
 
-// Función para crear un formulario de calificación (implementada directamente)
+// Función para crear un formulario de calificación
 function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSuccess) {
     console.log('Creating rating form for reminder:', reminderId);
     const form = document.createElement('div');
     form.className = 'rating-form';
     
     const title = document.createElement('h3');
-    title.textContent = `Calificar a ${userRole === 'senior' ? 'voluntario' : 'senior'}`;
+    title.textContent = `Rate this senior`;
     form.appendChild(title);
     
     let currentRating = 0;
@@ -131,23 +131,23 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
     
     // Crear campo de comentario
     const commentLabel = document.createElement('label');
-    commentLabel.textContent = 'Comentario (opcional):';
+    commentLabel.textContent = 'Comment (optional):';
     form.appendChild(commentLabel);
     
     const commentTextarea = document.createElement('textarea');
-    commentTextarea.placeholder = 'Escribe un comentario sobre tu experiencia...';
+    commentTextarea.placeholder = 'Write a comment about your experience...';
     form.appendChild(commentTextarea);
     
     // Crear botón de envío
     const submitButton = document.createElement('button');
-    submitButton.textContent = 'Enviar calificación';
+    submitButton.textContent = 'Submit Rating';
     submitButton.disabled = true;
     submitButton.addEventListener('click', async () => {
         if (currentRating === 0) return;
         
         try {
             submitButton.disabled = true;
-            submitButton.textContent = 'Enviando...';
+            submitButton.textContent = 'Sending...';
             
             const response = await fetch('/api/ratings', {
                 method: 'POST',
@@ -171,20 +171,20 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
                 form.innerHTML = '';
                 const successMessage = document.createElement('div');
                 successMessage.className = 'message-container';
-                successMessage.innerHTML = '<p class="success-message">¡Gracias por tu calificación!</p>';
+                successMessage.innerHTML = '<p class="success-message">Thank you for your rating!</p>';
                 form.appendChild(successMessage);
             } else {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Error al enviar la calificación');
+                throw new Error(errorData.error || 'Error submitting rating');
             }
         } catch (error) {
             console.error('Error submitting rating:', error);
             submitButton.disabled = false;
-            submitButton.textContent = 'Enviar calificación';
+            submitButton.textContent = 'Submit Rating';
             
             const errorMessage = document.createElement('p');
             errorMessage.className = 'error-message';
-            errorMessage.textContent = error.message || 'Ocurrió un error al enviar la calificación';
+            errorMessage.textContent = error.message || 'An error occurred while submitting your rating';
             form.appendChild(errorMessage);
         }
     });
@@ -234,94 +234,15 @@ async function checkAndShowRatingForm(reminder, userId, container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const profileForm = document.getElementById('profile-form');
-    const messageContainer = document.getElementById('message-container');
     const user = JSON.parse(localStorage.getItem('user'));
 
-    if (!user) {
+    if (!user || user.profileType !== 'volunteer') {
         window.location.href = 'login.html';
         return;
     }
 
-    // Function to load profile data into the form
-    const loadProfile = async () => {
-        try {
-            const response = await fetch(`/api/user/profile/${user.id}`);
-            if (response.ok) {
-                const profile = await response.json();
-                console.log('Received profile data:', profile); // Diagnostic log
-
-                // Refresh user data in localStorage to keep it up-to-date
-                localStorage.setItem('user', JSON.stringify(profile));
-
-                document.getElementById('phone').value = profile.phone || '';
-                document.getElementById('province').value = profile.province || '';
-
-                // Display last login date and make it read-only
-                const lastLoginInput = document.getElementById('last-login');
-                if (profile.last_login_date) {
-                    const lastLoginDate = new Date(profile.last_login_date);
-                    lastLoginInput.value = lastLoginDate.toLocaleString();
-                } else {
-                    lastLoginInput.value = 'Never';
-                }
-                lastLoginInput.disabled = true; // Force read-only
-
-                // Set availability
-                if (profile.availability) {
-                    document.querySelector(`input[name="availability"][value="${profile.availability}"]`).checked = true;
-                }
-
-                // Set skills
-                const skillCheckboxes = document.querySelectorAll('input[name="skills"]');
-                skillCheckboxes.forEach(checkbox => {
-                    if (profile.skills && profile.skills.includes(checkbox.value)) {
-                        checkbox.checked = true;
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Failed to load profile:', error);
-        }
-    };
-
-    // Handle form submission
-    profileForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const selectedSkills = Array.from(document.querySelectorAll('input[name="skills"]:checked')).map(cb => cb.value);
-        const selectedAvailability = document.querySelector('input[name="availability"]:checked')?.value;
-
-        const updatedProfile = {
-            userId: user.id,
-            phone: document.getElementById('phone').value,
-            province: document.getElementById('province').value,
-            skills: selectedSkills,
-            availability: selectedAvailability
-        };
-
-        try {
-            const response = await fetch('/api/user/profile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedProfile)
-            });
-
-            if (response.ok) {
-                displayMessage('Profile updated successfully!', 'success', messageContainer);
-            } else {
-                displayMessage('Failed to update profile.', 'error', messageContainer);
-            }
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            displayMessage('An error occurred while updating the profile.', 'error', messageContainer);
-        }
-    });
-
-    // Load profile data when the page loads
-    loadProfile();
+    // Actualizar el título con el nombre del usuario
+    document.title = `Completed Activities - ${user.firstName}`;
     
     // Cargar actividades completadas
     loadCompletedActivities(user.id);

@@ -12,21 +12,25 @@
             <div class="header-content">
                 <a href="requests.html" class="home-button"><img src="assets/home-icon.png" alt="Back"></a>
                 <h1>Request Details</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Logout">
+                    <img src="assets/logout-icon.png" alt="Logout" style="display: block; width: 30px; height: 30px;">
+                </a>
             </div>
         </header>
+
         <main>
+            <div id="request-details-container" class="simple-form"></div>
+            <div id="senior-rating-container" class="rating-section"></div>
+            <div id="complete-section" style="display: none;" class="complete-section"></div>
+            <div id="rating-section" style="display: none;" class="rating-section"></div>
             <div id="message-container" class="message-container"></div>
-            <div id="request-details-container" class="simple-form">
-                <!-- Details will be loaded here dynamically -->
-            </div>
-            <div id="actions-container" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
-                 <button id="accept-request-button" class="action-button">Accept Request</button>
-                 <a href="requests.html" class="action-button secondary" style="background-color: #795548;">Back to List</a>
-            </div>
+            <button id="accept-request-button" class="action-button">Accept Request</button>
+            <a href="requests.html" class="action-button secondary-button">Back to List</a>
         </main>
     </div>
     <script src="auth.js"></script>
     <script src="notifications.js"></script>
+    <script src="ratings.js"></script>
     <script src="request-detail.js"></script>
 </body>
 </html>
