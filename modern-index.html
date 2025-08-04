@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VecinAI - Ayuda a tu alcance</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <a href="index.html" class="home-button" title="Home">
+                <i class="fas fa-home"></i>
+            </a>
+            <h1 id="welcome-header">Bienvenido, <span id="user-name">Leonardo</span></h1>
+            <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="message-container success" id="success-message">
+            ¡Sesión iniciada correctamente!
+        </div>
+        
+        <main>
+            <button class="action-button" id="chat-button">
+                <i class="fas fa-comments fa-lg"></i>
+                <span>Conversar con VecinAI</span>
+            </button>
+            
+            <button class="action-button" id="reminders-button">
+                <i class="fas fa-calendar-check fa-lg"></i>
+                <span>Mis Citas</span>
+            </button>
+            
+            <a href="senior_profile.html" id="profile-button" class="action-button">
+                <i class="fas fa-user fa-lg"></i>
+                <span>Mi Perfil</span>
+            </a>
+            
+            <button class="action-button" id="help-button">
+                <i class="fas fa-hands-helping fa-lg"></i>
+                <span>Solicitar Ayuda</span>
+            </button>
+        </main>
+    </div>
+
+    <script>
+        // Mostrar mensaje de éxito brevemente
+        document.addEventListener('DOMContentLoaded', () => {
+            const successMessage = document.getElementById('success-message');
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+            
+            // Verificar usuario (simulado)
+            const user = JSON.parse(localStorage.getItem('user')) || { firstName: 'Usuario' };
+            document.getElementById('user-name').textContent = user.firstName;
+            
+            // Configurar botones
+            document.getElementById('chat-button').addEventListener('click', () => {
+                window.location.href = 'chat.html';
+            });
+            
+            document.getElementById('reminders-button').addEventListener('click', () => {
+                window.location.href = 'reminders.html';
+            });
+            
+            document.getElementById('help-button').addEventListener('click', () => {
+                window.location.href = 'requests.html';
+            });
+            
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.removeItem('user');
+                window.location.href = 'auth.html';
+            });
+        });
+    </script>
+</body>
+</html>

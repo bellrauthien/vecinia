@@ -3,39 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reminders - Assistant</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Mis Citas</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <link rel="stylesheet" href="tabs-style.css">
+    <link rel="stylesheet" href="reminder-actions.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Home"></a>
-                <h1>My Reminders</h1>
-                <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout">
+                <a href="index.html" class="home-button" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <h1>Mis Citas</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
 
         <main>
-            <a href="new_reminder.html" class="action-button new-reminder-button">+ New Reminder</a>
+            <div class="action-bar">
+                <a href="new_reminder.html" class="btn btn-primary" id="new-reminder-button">
+                    <i class="fas fa-plus"></i> Nueva Cita
+                </a>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pending">Pendientes</button>
+                <button class="tab-btn" data-tab="accepted">Aceptadas</button>
+                <button class="tab-btn" data-tab="completed">Completadas</button>
+            </div>
+
             <div class="reminders-list-container">
-                <div class="reminders-section">
-                    <h2>Pending Appointments</h2>
-                    <ul id="pending-reminders-list" class="reminders-list"></ul>
+                <div class="tab-content active" id="pending-tab">
+                    <h2><i class="fas fa-clock"></i> Citas Pendientes</h2>
+                    <ul id="pending-reminders-list" class="reminder-list"></ul>
                 </div>
                 
-                <div class="reminders-section">
-                    <h2>Accepted Appointments</h2>
-                    <ul id="accepted-reminders-list" class="reminders-list"></ul>
+                <div class="tab-content" id="accepted-tab">
+                    <h2><i class="fas fa-check-circle"></i> Citas Aceptadas</h2>
+                    <ul id="accepted-reminders-list" class="reminder-list"></ul>
                 </div>
                 
-                <div class="reminders-section">
-                    <h2>Completed Appointments</h2>
-                    <ul id="completed-reminders-list" class="reminders-list"></ul>
-                    <a href="completed_history.html" class="show-more-link">View All Completed Appointments</a>
+                <div class="tab-content" id="completed-tab">
+                    <h2><i class="fas fa-check-double"></i> Citas Completadas</h2>
+                    <ul id="completed-reminders-list" class="reminder-list"></ul>
+                    <a href="completed_history.html" class="btn btn-outline btn-block" id="show-more-completed">Mostrar más</a>
                 </div>
             </div>
         </main>
@@ -43,5 +60,7 @@
     <script src="reminders.js"></script>
     <script src="auth.js"></script>
     <script src="simple-show-more.js"></script>
+    <script src="tabs.js"></script>
+    <script src="ratings.js"></script>
 </body>
 </html>

@@ -3,32 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - VecinAI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Mi Perfil</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Home"></a>
-                <h1>My Profile</h1>
-                <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout">
+                <a href="index.html" class="home-button" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <h1>Mi Perfil</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
         <main>
-            <form id="senior-profile-form" class="simple-form">
-                <h2>Update Your Information</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user-edit"></i> Actualizar Información</h2>
+                </div>
+                <div class="card-body">
+                    <form id="senior-profile-form" class="simple-form">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Correo electrónico:</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
 
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Número de teléfono:</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" required>
+                        </div>
 
-                <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" name="phone" required>
-
-                <label for="province">Province:</label>
-                <select id="province" name="province" required>
+                        <div class="form-group">
+                            <label for="province" class="form-label">Provincia:</label>
+                            <select id="province" name="province" class="form-control" required>
                     <option value="">Select province</option>
                     <option value="Álava">Álava</option>
                     <option value="Albacete">Albacete</option>
@@ -80,17 +92,26 @@
                     <option value="Vizcaya">Vizcaya</option>
                     <option value="Zamora">Zamora</option>
                     <option value="Zaragoza">Zaragoza</option>
-                </select>
+                        </select>
+                        </div>
 
-                <label for="about_me">About Me:</label>
-                <textarea id="about_me" name="about_me" rows="4" placeholder="Tell us a little about yourself..."></textarea>
+                        <div class="form-group">
+                            <label for="about_me" class="form-label">Sobre mí:</label>
+                            <textarea id="about_me" name="about_me" rows="4" class="form-control" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+                        </div>
 
-                <label for="last-login">Last Login:</label>
-                <input type="text" id="last-login" name="last-login" readonly>
+                        <div class="form-group">
+                            <label for="last-login" class="form-label">Último acceso:</label>
+                            <input type="text" id="last-login" name="last-login" class="form-control" readonly>
+                        </div>
 
-                <div id="message-container" class="message-container"></div>
-                <button type="submit" class="action-button">Save Profile</button>
-            </form>
+                        <div id="message-container" class="message-container"></div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-save"></i> Guardar Perfil
+                        </button>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
     <script src="auth.js"></script>

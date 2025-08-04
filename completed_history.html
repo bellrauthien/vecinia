@@ -3,26 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Completed Appointments History - VecinAI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Completed Appointments History</title>
+    <link rel="stylesheet" href="modern-style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <a href="reminders.html" class="home-button"><img src="assets/home-icon.png" alt="Back"></a>
+                <a href="reminders.html" class="home-button" title="Back to Appointments">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
                 <h1>Completed Appointments</h1>
                 <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
 
         <main>
-            <div class="history-container">
-                <p class="history-description">Here you can see all your completed appointments.</p>
-                <ul id="completed-reminders-list" class="reminders-list"></ul>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-check-double"></i> Appointment History</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Here you can see all your completed appointments.</p>
+                    <div id="completed-reminders-container">
+                        <ul id="completed-reminders-list" class="reminder-list">
+                            <li class="loading-message">
+                                <i class="fas fa-spinner fa-spin"></i> Loading completed appointments...
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

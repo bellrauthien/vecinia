@@ -3,45 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Reminder - VecinAI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - New Appointment</title>
+    <link rel="stylesheet" href="modern-style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <a href="index.html" class="home-button"><img src="assets/home-icon.png" alt="Back"></a>
-                <h1>New Reminder</h1>
+                <a href="reminders.html" class="home-button" title="Back to Appointments">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1>New Appointment</h1>
                 <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
         <main>
-            <form id="new-reminder-form" class="simple-form">
-                <label for="reminder-note">Reminder:</label>
-                <input type="text" id="reminder-note" placeholder="e.g., Doctor's appointment" required>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-calendar-plus"></i> Create New Appointment</h2>
+                </div>
+                <div class="card-body">
+                    <form id="new-reminder-form" class="simple-form">
+                        <div class="form-group">
+                            <label for="reminder-note" class="form-label">Description:</label>
+                            <input type="text" id="reminder-note" class="form-control" placeholder="e.g., Doctor's appointment" required>
+                        </div>
 
-                <label for="reminder-type">Type:</label>
-                <select id="reminder-type" required>
-                    <option value="doctor-pharmacy">Doctor/Pharmacy</option>
-                    <option value="bank">Bank</option>
-                    <option value="shopping">Shopping</option>
-                    <option value="errands">Errands</option>
-                    <option value="diy">DIY</option>
-                    <option value="tech-help">Computer/Mobile</option>
-                    <option value="other">Other...</option>
-                </select>
+                        <div class="form-group">
+                            <label for="reminder-type" class="form-label">Type:</label>
+                            <select id="reminder-type" class="form-control" required>
+                                <option value="doctor-pharmacy">Doctor/Pharmacy</option>
+                                <option value="bank">Bank</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="errands">Errands</option>
+                                <option value="diy">DIY</option>
+                                <option value="tech-help">Computer/Mobile</option>
+                                <option value="other">Other...</option>
+                            </select>
+                        </div>
 
-                <label for="reminder-date">Date:</label>
-                <input type="date" id="reminder-date" required>
+                        <div class="form-group">
+                            <label for="reminder-date" class="form-label">Date:</label>
+                            <input type="date" id="reminder-date" class="form-control" required>
+                        </div>
 
-                <label for="reminder-time">Time:</label>
-                <input type="time" id="reminder-time" required>
+                        <div class="form-group">
+                            <label for="reminder-time" class="form-label">Time:</label>
+                            <input type="time" id="reminder-time" class="form-control" required>
+                        </div>
 
-                <label for="province">Province:</label>
-                <select id="province" name="province" required>
+                        <div class="form-group">
+                            <label for="province" class="form-label">Province:</label>
+                            <select id="province" name="province" class="form-control" required>
                     <option value="">Select province</option>
                     <option value="Álava">Álava</option>
                     <option value="Albacete">Albacete</option>
@@ -93,41 +111,50 @@
                     <option value="Vizcaya">Vizcaya</option>
                     <option value="Zamora">Zamora</option>
                     <option value="Zaragoza">Zaragoza</option>
-                </select>
+                            </select>
+                        </div>
 
-                <div class="form-group-checkbox">
-                    <input type="checkbox" id="needs-volunteer" name="needs-volunteer">
-                    <label for="needs-volunteer">I need a volunteer for this task</label>
-                </div>
-                
-                <!-- Sección para mostrar información del voluntario y estado de la solicitud -->
-                <div id="volunteer-info-section" style="display: none;" class="volunteer-info-section">
-                    <div class="status-container">
-                        <h3>Estado de la solicitud:</h3>
-                        <span id="request-status" class="status-badge"></span>
-                    </div>
-                    <div id="volunteer-details" class="volunteer-details">
-                        <h3>Información del voluntario:</h3>
-                        <p id="volunteer-name"></p>
-                        <p id="volunteer-phone"></p>
-                        <div id="volunteer-rating-container"></div>
-                    </div>
-                </div>
-                
-                <!-- Sección para completar la solicitud -->
-                <div id="complete-section" style="display: none;" class="complete-section">
-                </div>
-                
-                <!-- Sección para calificar -->
-                <div id="rating-section" style="display: none;" class="rating-section">
-                </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="needs-volunteer" name="needs-volunteer" class="form-check-input">
+                                <label for="needs-volunteer" class="form-check-label">I need a volunteer for this task</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Sección para mostrar información del voluntario y estado de la solicitud -->
+                        <div id="volunteer-info-section" style="display: none;" class="volunteer-info-section card mt-3">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-info-circle"></i> Request Status</h3>
+                                <span id="request-status" class="status-badge"></span>
+                            </div>
+                            <div id="volunteer-details" class="card-body">
+                                <h4><i class="fas fa-user-circle"></i> Volunteer Information</h4>
+                                <p id="volunteer-name" class="mb-2"></p>
+                                <p id="volunteer-phone" class="mb-2"></p>
+                                <div id="volunteer-rating-container"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sección para completar la solicitud -->
+                        <div id="complete-section" style="display: none;" class="complete-section mt-3">
+                        </div>
+                        
+                        <!-- Sección para calificar -->
+                        <div id="rating-section" style="display: none;" class="rating-section mt-3">
+                        </div>
 
-                <div id="message-container" class="message-container"></div>
-                <div class="button-container">
-                    <button type="submit" class="action-button">Save Reminder</button>
-                    <button type="button" id="delete-button" class="delete-action-button" style="display: none;">Delete Reminder</button>
+                        <div id="message-container" class="message-container"></div>
+                        <div class="button-group mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Save Appointment
+                            </button>
+                            <button type="button" id="delete-button" class="btn btn-danger btn-lg" style="display: none;">
+                                <i class="fas fa-trash"></i> Delete Appointment
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </main>
     </div>
     <script src="auth.js"></script>

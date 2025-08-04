@@ -26,7 +26,7 @@ async function loadCompletedActivities(userId) {
         }
         
         if (activities.length === 0) {
-            container.innerHTML = '<p class="no-activities">No completed activities found. When you complete activities with seniors, they will appear here for rating.</p>';
+            container.innerHTML = '<div class="no-data-message"><i class="fas fa-info-circle"></i> No hay actividades completadas. Cuando completes actividades con mayores, aparecerán aquí para valorarlas.</div>';
             return;
         }
         
@@ -45,8 +45,13 @@ async function loadCompletedActivities(userId) {
                 </div>
                 <p class="activity-details">${activity.note}</p>
                 <div class="senior-info">
-                    <p><strong>Senior:</strong> ${activity.seniorFirstName} ${activity.seniorLastName}</p>
-                    <p><strong>Phone:</strong> ${activity.seniorPhone || 'N/A'}</p>
+                    <div class="senior-header">
+                        <i class="fas fa-user-circle"></i>
+                        <span><strong>Mayor:</strong> ${activity.seniorFirstName} ${activity.seniorLastName}</span>
+                    </div>
+                    <div class="senior-contact">
+                        <i class="fas fa-phone"></i> ${activity.seniorPhone || 'N/A'}
+                    </div>
                 </div>
             `;
             
@@ -64,7 +69,7 @@ async function loadCompletedActivities(userId) {
         });
     } catch (error) {
         console.error('Error loading completed activities:', error);
-        container.innerHTML = '<p class="error-message">Error loading completed activities. Please try again later.</p>';
+        container.innerHTML = '<div class="message-container error show"><i class="fas fa-exclamation-circle"></i> Error al cargar las actividades completadas. Por favor, inténtalo de nuevo más tarde.</div>';
     }
 }
 
@@ -92,63 +97,72 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
     form.className = 'rating-form';
     
     const title = document.createElement('h3');
-    title.textContent = `Rate this senior`;
+    title.textContent = `Valora a este mayor`;
     form.appendChild(title);
     
     let currentRating = 0;
     
-    // Crear estrellas de calificación
+    // Crear estrellas de calificación con Font Awesome
     const ratingContainer = document.createElement('div');
-    ratingContainer.className = 'rating-stars';
+    ratingContainer.className = 'star-rating';
+    ratingContainer.setAttribute('data-activity-id', reminderId);
+    
+    // Añadir contador de valoración
+    const ratingValue = document.createElement('span');
+    ratingValue.className = 'rating-value';
+    ratingValue.textContent = '0/5';
     
     for (let i = 1; i <= 5; i++) {
-        const star = document.createElement('span');
-        star.className = 'rating-star empty';
-        star.innerHTML = '★'; // Estrella
-        star.style.cursor = 'pointer';
+        const star = document.createElement('button');
+        star.className = 'star';
+        star.setAttribute('data-value', i);
+        star.innerHTML = '<i class="fas fa-star"></i>';
         star.addEventListener('click', () => {
             currentRating = i;
             updateStars(i);
+            ratingValue.textContent = `${currentRating}/5`;
             submitButton.disabled = false;
         });
         
         ratingContainer.appendChild(star);
     }
     
+    ratingContainer.appendChild(ratingValue);
+    
     form.appendChild(ratingContainer);
     
     // Función para actualizar la visualización de las estrellas
     function updateStars(rating) {
-        const stars = ratingContainer.querySelectorAll('.rating-star');
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.classList.remove('empty');
+        const stars = ratingContainer.querySelectorAll('.star');
+        stars.forEach((star) => {
+            const starValue = parseInt(star.getAttribute('data-value'));
+            if (starValue <= rating) {
+                star.classList.add('active');
             } else {
-                star.classList.add('empty');
+                star.classList.remove('active');
             }
         });
     }
     
     // Crear campo de comentario
-    const commentLabel = document.createElement('label');
-    commentLabel.textContent = 'Comment (optional):';
-    form.appendChild(commentLabel);
-    
-    const commentTextarea = document.createElement('textarea');
-    commentTextarea.placeholder = 'Write a comment about your experience...';
-    form.appendChild(commentTextarea);
+    const commentInput = document.createElement('textarea');
+    commentInput.placeholder = 'Deja un comentario sobre tu experiencia (opcional)';
+    commentInput.maxLength = 200;
+    form.appendChild(commentInput);
     
     // Crear botón de envío
     const submitButton = document.createElement('button');
-    submitButton.textContent = 'Submit Rating';
+    submitButton.className = 'btn btn-primary submit-rating';
+    submitButton.textContent = 'Enviar valoración';
     submitButton.disabled = true;
     submitButton.addEventListener('click', async () => {
         if (currentRating === 0) return;
         
         try {
             submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
+            // Enviar calificación al servidor
             const response = await fetch('/api/ratings', {
                 method: 'POST',
                 headers: {
@@ -159,32 +173,33 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
                     raterId,
                     ratedId,
                     score: currentRating,
-                    comment: commentTextarea.value.trim()
+                    comment: commentInput.value.trim()
                 })
             });
             
             if (response.ok) {
-                if (onSubmitSuccess) {
+                console.log('Rating submitted successfully');
+                
+                // Mostrar mensaje de éxito
+                form.innerHTML = '<div class="rated-message"><p>¡Valoración enviada con éxito!</p></div>';
+                
+                // Llamar al callback de éxito si se proporciona
+                if (typeof onSubmitSuccess === 'function') {
                     onSubmitSuccess();
                 }
-                
-                form.innerHTML = '';
-                const successMessage = document.createElement('div');
-                successMessage.className = 'message-container';
-                successMessage.innerHTML = '<p class="success-message">Thank you for your rating!</p>';
-                form.appendChild(successMessage);
             } else {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Error submitting rating');
+                throw new Error(errorData.error || 'Failed to submit rating');
             }
         } catch (error) {
             console.error('Error submitting rating:', error);
+            submitButton.innerHTML = 'Enviar valoración';
             submitButton.disabled = false;
-            submitButton.textContent = 'Submit Rating';
             
-            const errorMessage = document.createElement('p');
-            errorMessage.className = 'error-message';
-            errorMessage.textContent = error.message || 'An error occurred while submitting your rating';
+            // Mostrar mensaje de error
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'message-container error show';
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${error.message}`;
             form.appendChild(errorMessage);
         }
     });
@@ -226,7 +241,7 @@ async function checkAndShowRatingForm(reminder, userId, container) {
             // Si ya ha calificado, mostrar mensaje
             const ratedMessage = document.createElement('div');
             ratedMessage.className = 'rated-message';
-            ratedMessage.innerHTML = '<p>You have already rated this senior.</p>';
+            ratedMessage.innerHTML = '<p>Ya has valorado a este senior.</p>';
             container.appendChild(ratedMessage);
         }
     } catch (error) {

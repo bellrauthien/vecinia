@@ -84,38 +84,88 @@ function updateStarDisplay(starsContainer, rating, isHover = false) {
 }
 
 // Function to create a rating form
-// Expuesta globalmente para que pueda ser usada en otros archivos
-window.createRatingForm = function(reminderId, raterId, ratedId, userRole, onSubmitSuccess) {
+function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSuccess) {
     const form = document.createElement('div');
     form.className = 'rating-form';
     
     const title = document.createElement('h3');
-    title.textContent = `Calificar a ${userRole === 'senior' ? 'voluntario' : 'senior'}`;
+    title.textContent = userRole === 'senior' ? 'Rate your volunteer' : 'Rate this senior';
     form.appendChild(title);
     
     let currentRating = 0;
     
-    // Create rating stars
-    const ratingContainer = createRatingStars(0, null, true, (rating) => {
-        currentRating = rating;
-        submitButton.disabled = currentRating === 0;
-    });
+    // Create rating stars with modern design
+    const ratingContainer = document.createElement('div');
+    ratingContainer.className = 'rating-container';
+    
+    // Create stars container with label
+    const ratingLabel = document.createElement('label');
+    ratingLabel.className = 'form-label';
+    ratingLabel.textContent = 'Your rating:';
+    ratingContainer.appendChild(ratingLabel);
+    
+    const starsContainer = document.createElement('div');
+    starsContainer.className = 'rating-stars';
+    ratingContainer.appendChild(starsContainer);
+    
+    // Create rating value display
+    const ratingValue = document.createElement('div');
+    ratingValue.className = 'rating-value';
+    ratingValue.textContent = '0/5';
+    ratingContainer.appendChild(ratingValue);
+    
+    // Create 5 stars with Font Awesome icons
+    for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'rating-star empty';
+        star.innerHTML = '<i class="fas fa-star"></i>'; // Font Awesome star
+        star.setAttribute('data-value', i);
+        star.addEventListener('click', () => {
+            currentRating = i;
+            updateStarsInContainer(starsContainer, i);
+            ratingValue.textContent = `${i}/5`;
+            submitButton.disabled = false;
+        });
+        starsContainer.appendChild(star);
+    }
+    
+    // Función para actualizar las estrellas en el contenedor
+    function updateStarsInContainer(container, rating) {
+        const stars = container.querySelectorAll('.rating-star');
+        stars.forEach(star => {
+            const value = parseInt(star.getAttribute('data-value'));
+            if (value <= rating) {
+                star.classList.remove('empty');
+            } else {
+                star.classList.add('empty');
+            }
+        });
+    }
+    
     form.appendChild(ratingContainer);
     
-    // Create comment textarea
+    // Create comment textarea with modern design
+    const commentGroup = document.createElement('div');
+    commentGroup.className = 'form-group';
+    
     const commentLabel = document.createElement('label');
-    commentLabel.textContent = 'Comentario (opcional):';
+    commentLabel.textContent = 'Comment (optional):';
+    commentLabel.className = 'form-label';
     commentLabel.setAttribute('for', 'rating-comment');
-    form.appendChild(commentLabel);
+    commentGroup.appendChild(commentLabel);
     
     const commentTextarea = document.createElement('textarea');
     commentTextarea.id = 'rating-comment';
-    commentTextarea.placeholder = 'Escribe un comentario sobre tu experiencia...';
-    form.appendChild(commentTextarea);
+    commentTextarea.className = 'form-control';
+    commentTextarea.placeholder = 'Write a comment about your experience...';
+    commentGroup.appendChild(commentTextarea);
     
-    // Create submit button
+    form.appendChild(commentGroup);
+    
+    // Create submit button with modern design
     const submitButton = document.createElement('button');
-    submitButton.textContent = 'Enviar calificación';
+    submitButton.className = 'btn btn-primary btn-block';
+    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Rating';
     submitButton.disabled = true;
     submitButton.addEventListener('click', async () => {
         if (currentRating === 0) return;
@@ -143,55 +193,52 @@ window.createRatingForm = function(reminderId, raterId, ratedId, userRole, onSub
                     onSubmitSuccess();
                 }
                 
-                // Replace form with success message
+                // Replace form with modern success message
                 form.innerHTML = '';
                 const successMessage = document.createElement('div');
-                successMessage.className = 'message-container';
-                successMessage.innerHTML = '<p class="success-message">¡Gracias por tu calificación!</p>';
+                successMessage.className = 'success-message';
+                successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Thank you for your rating!';
                 form.appendChild(successMessage);
                 
                 // Deshabilitar botones de Update y Delete si existen
-                // Buscar todos los botones de acción y el botón de eliminar
-                const updateButtons = document.querySelectorAll('.action-button');
+                const updateButtons = document.querySelectorAll('.btn');
                 const deleteButton = document.getElementById('delete-button');
                 
                 // Deshabilitar todos los botones de acción (puede haber más de uno en la página)
                 updateButtons.forEach(button => {
-                    if (button && button.textContent.includes('Update') || button.textContent.includes('Reminder')) {
+                    if (button && (button.textContent.includes('Update') || button.textContent.includes('Save'))) {
                         button.disabled = true;
-                        button.style.opacity = '0.5';
-                        button.style.cursor = 'not-allowed';
-                        console.log('Botón deshabilitado:', button.textContent);
+                        button.classList.add('btn-disabled');
+                        button.style.pointerEvents = 'none';
                     }
                 });
                 
                 if (deleteButton) {
                     deleteButton.disabled = true;
                     deleteButton.style.display = 'none';
-                    console.log('Botón de eliminar ocultado');
                 }
                 
-                // También intentar con selectores más específicos para la página de recordatorios
+                // Ocultar el contenedor de calificación después de un tiempo
                 setTimeout(() => {
-                    const submitButton = document.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.style.opacity = '0.5';
+                    const ratingContainer = form.closest('.rating-form-container');
+                    if (ratingContainer) {
+                        ratingContainer.style.transition = 'opacity 1s ease';
+                        ratingContainer.style.opacity = '0.7';
                     }
-                }, 500);
+                }, 3000);
             } else {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Error al enviar la calificación');
+                throw new Error(errorData.error || 'Error sending rating');
             }
         } catch (error) {
             console.error('Error submitting rating:', error);
             submitButton.disabled = false;
-            submitButton.textContent = 'Enviar calificación';
+            submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Rating';
             
-            const errorMessage = document.createElement('p');
-            errorMessage.className = 'error-message';
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = error.message || 'Ocurrió un error al enviar la calificación';
+            // Mostrar mensaje de error con estilo moderno
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'message-container error show';
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message || 'An error occurred while submitting your rating'}`;
             form.appendChild(errorMessage);
         }
     });
@@ -217,8 +264,72 @@ function createCompleteButton(reminderId, onCompleteSuccess) {
                 });
                 
                 if (response.ok) {
+                    // Obtener información del recordatorio para mostrar el formulario de calificación
+                    try {
+                        const reminderResponse = await fetch(`/api/reminders/${reminderId}`);
+                        if (reminderResponse.ok) {
+                            const reminderData = await reminderResponse.json();
+                            
+                            // Crear el contenedor para el formulario de calificación
+                            const ratingContainer = document.createElement('div');
+                            ratingContainer.className = 'rating-form-container mt-3';
+                            ratingContainer.innerHTML = `
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><i class="fas fa-star"></i> Valorar al voluntario</h3>
+                                    </div>
+                                    <div class="card-body" id="rating-form-${reminderId}"></div>
+                                </div>
+                            `;
+                            
+                            // Insertar el contenedor después del botón
+                            const parentElement = button.parentElement.parentElement; // li element
+                            parentElement.appendChild(ratingContainer);
+                            
+                            // Ocultar el botón de completar
+                            button.parentElement.style.display = 'none';
+                            
+                            // Crear el formulario de calificación
+                            const user = JSON.parse(localStorage.getItem('user'));
+                            if (user && reminderData.volunteerId) {
+                                const ratingForm = createRatingForm(
+                                    reminderId,
+                                    user.id,
+                                    reminderData.volunteerId,
+                                    'senior',
+                                    () => {
+                                        // Callback cuando se envía la calificación exitosamente
+                                        if (onCompleteSuccess) {
+                                            onCompleteSuccess();
+                                        }
+                                    }
+                                );
+                                
+                                // Actualizar el estilo del formulario para el nuevo diseño
+                                const formContainer = document.getElementById(`rating-form-${reminderId}`);
+                                if (formContainer) {
+                                    formContainer.appendChild(ratingForm);
+                                    
+                                    // Actualizar los estilos de los elementos del formulario
+                                    const submitButton = formContainer.querySelector('button');
+                                    if (submitButton) {
+                                        submitButton.className = 'btn btn-primary btn-block mt-3';
+                                    }
+                                    
+                                    const textarea = formContainer.querySelector('textarea');
+                                    if (textarea) {
+                                        textarea.className = 'form-control';
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching reminder data:', error);
+                    }
+                    
                     if (onCompleteSuccess) {
-                        onCompleteSuccess();
+                        // No llamamos al callback aquí para evitar recargar la página
+                        // onCompleteSuccess();
                     }
                 } else {
                     const errorData = await response.json();

@@ -146,10 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${reminder.note}</span>
                     ${statusBadge}
                 </div>
-                ${reminder.address ? `<span class="reminder-address-display">📍 ${reminder.address}</span>` : ''}
+                ${reminder.address ? `<span class="reminder-address-display"><i class="fas fa-map-marker-alt"></i> ${reminder.address}</span>` : ''}
                 ${volunteerInfo}
             </div>
-            <span>${new Date(reminder.date).toLocaleDateString()} at ${reminder.time}</span>
+            <span><i class="far fa-calendar-alt"></i> ${new Date(reminder.date).toLocaleDateString()} at ${reminder.time}</span>
         `;
         
         // Hacer que el contenido sea clickeable para editar
@@ -170,6 +170,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Añadir el contenido y el botón al elemento de la lista
         li.appendChild(contentDiv);
         li.appendChild(deleteButton);
+        
+        // Añadir botón de completar tarea si es un recordatorio aceptado
+        if (reminder.needs_volunteer === 1 && reminder.requestStatus === 'accepted' && reminder.completed !== 1) {
+            const completeButtonContainer = document.createElement('div');
+            completeButtonContainer.classList.add('complete-button-container', 'mt-2');
+            
+            // Usar la función createCompleteButton de ratings.js
+            if (typeof createCompleteButton === 'function') {
+                const completeButton = createCompleteButton(reminder.id, () => {
+                    // Callback cuando se completa exitosamente
+                    fetchReminders(); // Recargar los recordatorios
+                });
+                
+                // Actualizar las clases para el nuevo diseño
+                completeButton.className = 'btn btn-success btn-sm';
+                completeButton.innerHTML = '<i class="fas fa-check"></i> Marcar como completado';
+                
+                completeButtonContainer.appendChild(completeButton);
+                li.appendChild(completeButtonContainer);
+            } else {
+                console.error('La función createCompleteButton no está disponible');
+            }
+        }
         
         return li;
     };

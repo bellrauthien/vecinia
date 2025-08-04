@@ -3,29 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request Details - VecinIA</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Request Details</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <a href="requests.html" class="home-button"><img src="assets/home-icon.png" alt="Back"></a>
+                <a href="requests.html" class="home-button" title="Back to Requests">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
                 <h1>Request Details</h1>
                 <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout" style="display: block; width: 30px; height: 30px;">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
 
         <main>
-            <div id="request-details-container" class="simple-form"></div>
-            <div id="senior-rating-container" class="rating-section"></div>
-            <div id="complete-section" style="display: none;" class="complete-section"></div>
-            <div id="rating-section" style="display: none;" class="rating-section"></div>
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-info-circle"></i> Request Information</h2>
+                </div>
+                <div class="card-body">
+                    <div id="request-details-container" class="request-details"></div>
+                </div>
+            </div>
+
+            <div class="card mt-4" id="senior-info-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user"></i> Senior Information</h2>
+                </div>
+                <div class="card-body">
+                    <div id="senior-rating-container" class="rating-section"></div>
+                </div>
+            </div>
+
+            <div id="complete-section" style="display: none;" class="complete-section card mt-4"></div>
+            <div id="rating-section" style="display: none;" class="rating-section card mt-4"></div>
             <div id="message-container" class="message-container"></div>
-            <button id="accept-request-button" class="action-button">Accept Request</button>
-            <a href="requests.html" class="action-button secondary-button">Back to List</a>
+            
+            <div class="button-group mt-4">
+                <button id="accept-request-button" class="btn btn-primary btn-lg">
+                    <i class="fas fa-check"></i> Accept Request
+                </button>
+                <a href="requests.html" class="btn btn-outline btn-lg">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
         </main>
     </div>
     <script src="auth.js"></script>

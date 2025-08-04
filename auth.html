@@ -3,21 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Senior Assistant</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Bienvenido</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container auth-container">
-        <header>
-            <h1>VecinAI</h1>
-            <p>Your friendly help, just a click away.</p>
-            <br/><br/><br/><br/><br/>
-            <br/><br/><br/><br/><br/>
-        </header>
-        <main>
-            <a href="login.html" class="action-button auth-button">Login</a>
-            <a href="register.html" class="action-button auth-button secondary">Register</a>
-        </main>
+    <div class="container">
+        <div class="auth-container card">
+            <header class="text-center">
+                <div class="app-logo">
+                    <i class="fas fa-hands-helping fa-3x"></i>
+                </div>
+                <h1>VecinAI</h1>
+                <p class="app-tagline">Your friendly help, just a click away.</p>
+                <div class="app-description">
+                    <p>Connecting seniors with volunteers ready to help.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Medical Appointments</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shopping-basket"></i>
+                            <span>Grocery Shopping</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-comments"></i>
+                            <span>Companionship</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-tools"></i>
+                            <span>Home Help</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-primary btn-lg btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="register.html" class="btn btn-outline btn-lg btn-block">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                </div>
+                
+                <div class="how-it-works">
+                    <h3><i class="fas fa-question-circle"></i> How It Works</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Sign Up</h4>
+                                <p>As a senior or a volunteer</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Connect</h4>
+                                <p>Request help or accept requests</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Collaborate</h4>
+                                <p>Receive or provide the needed help</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 </body>
 </html>

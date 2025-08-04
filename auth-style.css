@@ -1,0 +1,202 @@
+/* Estilos adicionales para las páginas de autenticación */
+.auth-container {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: var(--spacing-xl);
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-lg);
+    background-color: var(--card-bg);
+}
+
+.app-logo {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary);
+    position: relative;
+}
+
+.app-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--secondary);
+    border-radius: 3px;
+}
+
+.app-tagline {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    font-style: italic;
+}
+
+.app-description {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    background-color: rgba(74, 111, 165, 0.05);
+}
+
+.app-description p {
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(50% - var(--spacing-md));
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-3px);
+    background-color: rgba(74, 111, 165, 0.1);
+}
+
+.feature i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.feature span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Estilos para la sección "¿Cómo funciona?" */
+.how-it-works {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+.how-it-works h3 {
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+.steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.step:hover {
+    background-color: rgba(74, 111, 165, 0.05);
+    transform: translateX(5px);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.step-content {
+    text-align: left;
+}
+
+.step-content h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--primary-dark);
+}
+
+.step-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-3 {
+    margin-top: var(--spacing-md);
+}
+
+/* Animación para el logo */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.app-logo i {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Estilos para el formulario de login */
+.simple-form {
+    width: 100%;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 480px) {
+    .auth-container {
+        margin: 20px auto;
+        padding: var(--spacing-md);
+    }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .app-logo {
+        color: var(--primary-light);
+    }
+}

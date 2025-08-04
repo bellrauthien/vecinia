@@ -1,0 +1,127 @@
+/* Estilos adicionales para las pestañas en la página de recordatorios */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-lg);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+.tabs::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.tab-btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-btn:hover:not(.active) {
+    color: var(--primary-light);
+    border-bottom-color: var(--primary-light);
+    opacity: 0.7;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos para los recordatorios */
+.reminder-item {
+    position: relative;
+    margin-bottom: var(--spacing-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reminder-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.pending-reminder {
+    border-left: 4px solid var(--warning);
+}
+
+.accepted-reminder {
+    border-left: 4px solid var(--info);
+}
+
+.completed-reminder {
+    border-left: 4px solid var(--success);
+}
+
+.volunteer-info {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.volunteer-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.volunteer-contact {
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.volunteer-rating {
+    color: #FFD700;
+    font-size: 0.9rem;
+}
+
+.volunteer-rating span {
+    color: var(--text-secondary);
+    margin-left: var(--spacing-xs);
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 480px) {
+    .tabs {
+        padding-bottom: var(--spacing-xs);
+    }
+    
+    .tab-btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: 0.9rem;
+    }
+    
+    .reminder-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-xs);
+    }
+    
+    .reminder-actions .btn {
+        margin-bottom: var(--spacing-xs);
+    }
+}

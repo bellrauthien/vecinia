@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volunteer Dashboard - VecinAI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VecinAI - Panel de Voluntario</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <!-- Font Awesome for better icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header class="app-header">
             <div class="header-content">
-                <h1 id="welcome-title">Volunteer Dashboard</h1>
-                <a href="#" id="logout-button" class="logout-button" title="Logout">
-                    <img src="assets/logout-icon.png" alt="Logout">
+                <a href="volunteer_dashboard.html" class="home-button" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <h1 id="welcome-title">Panel de Voluntario</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </header>
         <main>
             <a href="volunteer_profile.html" id="profile-button" class="action-button">
-                <span>My Profile</span>
+                <i class="fas fa-user fa-lg"></i>
+                <span>Mi Perfil</span>
             </a>
             <a href="requests.html" id="requests-button" class="action-button">
-                <span>View Requests</span>
+                <i class="fas fa-hand-holding-heart fa-lg"></i>
+                <span>Ver Solicitudes</span>
             </a>
             <a href="completed_activities.html" id="completed-activities-button" class="action-button">
-                <span>Rate Completed Activities</span>
+                <i class="fas fa-star fa-lg"></i>
+                <span>Valorar Actividades Completadas</span>
             </a>
         </main>
     </div>
