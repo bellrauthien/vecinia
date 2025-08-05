@@ -26,7 +26,7 @@ async function loadCompletedActivities(userId) {
         }
         
         if (activities.length === 0) {
-            container.innerHTML = '<div class="no-data-message"><i class="fas fa-info-circle"></i> No hay actividades completadas. Cuando completes actividades con mayores, aparecerán aquí para valorarlas.</div>';
+            container.innerHTML = '<div class="no-data-message"><i class="fas fa-info-circle"></i> No completed activities. When you complete activities with seniors, they will appear here for you to rate them.</div>';
             return;
         }
         
