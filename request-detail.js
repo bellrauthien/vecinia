@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (request.seniorRating > 0) {
                     const ratingDiv = document.createElement('div');
                     ratingDiv.className = 'user-rating-badge';
-                    ratingDiv.innerHTML = '<strong>Calificación del senior:</strong> ';
+                    ratingDiv.innerHTML = '<strong>Senior Rating:</strong> ';
                     ratingDiv.appendChild(createRatingStars(request.seniorRating, request.seniorRatingCount));
                     seniorRatingContainer.appendChild(ratingDiv);
                 }

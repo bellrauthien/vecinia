@@ -241,7 +241,7 @@ async function checkAndShowRatingForm(reminder, userId, container) {
             // Si ya ha calificado, mostrar mensaje
             const ratedMessage = document.createElement('div');
             ratedMessage.className = 'rated-message';
-            ratedMessage.innerHTML = '<p>Ya has valorado a este senior.</p>';
+            ratedMessage.innerHTML = '<p>You have already rated this senior.</p>';
             container.appendChild(ratedMessage);
         }
     } catch (error) {

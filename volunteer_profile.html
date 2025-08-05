@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VecinAI - Mi Perfil</title>
+    <title>VecinAI - My Profile</title>
     <link rel="stylesheet" href="modern-style.css">
     <!-- Font Awesome for better icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,8 +15,8 @@
                 <a href="volunteer_dashboard.html" class="home-button" title="Dashboard">
                     <i class="fas fa-home"></i>
                 </a>
-                <h1>Mi Perfil</h1>
-                <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                <h1>My Profile</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Sign out">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -24,17 +24,17 @@
         <main>
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-user-edit"></i> Actualizar Información</h2>
+                    <h2 class="card-title"><i class="fas fa-user-edit"></i> Update Information</h2>
                 </div>
                 <div class="card-body">
                     <form id="profile-form" class="simple-form">
                         <div class="form-group">
-                            <label for="phone" class="form-label">Número de teléfono:</label>
-                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="ej., 612345678">
+                            <label for="phone" class="form-label">Phone number:</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" placeholder="e.g., 612345678">
                         </div>
 
                         <div class="form-group">
-                            <label for="province" class="form-label">Provincia:</label>
+                            <label for="province" class="form-label">Province:</label>
                             <select id="province" name="province" class="form-control">
                     <option value="">Select your province</option>
                     <option value="Álava">Álava</option>
@@ -90,53 +90,53 @@
                 </select>
 
                         <div class="form-group">
-                            <label class="form-label">Habilidades:</label>
+                            <label class="form-label">Skills:</label>
                             <div class="checkbox-group">
                                 <div class="form-check">
                                     <input type="checkbox" id="skill-company" name="skills" value="company" class="form-check-input">
-                                    <label for="skill-company" class="form-check-label">Compañía y charla</label>
+                                    <label for="skill-company" class="form-check-label">Companionship and conversation</label>
                                 </div>
                                 <div class="form-check">
                                     <input type="checkbox" id="skill-shopping" name="skills" value="shopping" class="form-check-input">
-                                    <label for="skill-shopping" class="form-check-label">Compra de alimentos</label>
+                                    <label for="skill-shopping" class="form-check-label">Grocery shopping</label>
                                 </div>
                                 <div class="form-check">
                                     <input type="checkbox" id="skill-errands" name="skills" value="errands" class="form-check-input">
-                                    <label for="skill-errands" class="form-check-label">Recados</label>
+                                    <label for="skill-errands" class="form-check-label">Errands</label>
                                 </div>
                                 <div class="form-check">
                                     <input type="checkbox" id="skill-diy" name="skills" value="diy" class="form-check-input">
-                                    <label for="skill-diy" class="form-check-label">Ayuda en casa</label>
+                                    <label for="skill-diy" class="form-check-label">Home help</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Disponibilidad:</label>
+                            <label class="form-label">Availability:</label>
                             <div class="radio-group">
                                 <div class="form-check">
                                     <input type="radio" id="avail-mornings" name="availability" value="mornings" class="form-check-input">
-                                    <label for="avail-mornings" class="form-check-label">Mañanas</label>
+                                    <label for="avail-mornings" class="form-check-label">Mornings</label>
                                 </div>
                                 <div class="form-check">
                                     <input type="radio" id="avail-afternoons" name="availability" value="afternoons" class="form-check-input">
-                                    <label for="avail-afternoons" class="form-check-label">Tardes</label>
+                                    <label for="avail-afternoons" class="form-check-label">Afternoons</label>
                                 </div>
                                 <div class="form-check">
                                     <input type="radio" id="avail-weekends" name="availability" value="weekends" class="form-check-input">
-                                    <label for="avail-weekends" class="form-check-label">Fines de semana</label>
+                                    <label for="avail-weekends" class="form-check-label">Weekends</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="last-login" class="form-label">Último acceso:</label>
+                            <label for="last-login" class="form-label">Last login:</label>
                             <input type="text" id="last-login" name="last-login" class="form-control" readonly>
                         </div>
 
                         <div id="message-container" class="message-container"></div>
                         <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-save"></i> Guardar Perfil
+                            <i class="fas fa-save"></i> Save Profile
                         </button>
                     </form>
                 </div>
@@ -144,13 +144,13 @@
 
             <div class="card mt-4">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-history"></i> Actividades Completadas</h2>
+                    <h2 class="card-title"><i class="fas fa-history"></i> Completed Activities</h2>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Aquí puedes valorar a los mayores después de completar actividades con ellos.</p>
+                    <p class="card-text">Here you can rate seniors after completing activities with them.</p>
                     <div id="completed-activities-container">
                         <p id="loading-message" class="loading-message">
-                            <i class="fas fa-spinner fa-spin"></i> Cargando actividades completadas...
+                            <i class="fas fa-spinner fa-spin"></i> Loading completed activities...
                         </p>
                     </div>
                 </div>

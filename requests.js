@@ -96,13 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 el.innerHTML = `
                     <div class="reminder-item-simple">
-                        <div>
+                        <div class="request-info">
                             <span class="reminder-type-tag">${request.type}</span>
                             <strong>${request.note}</strong>
                             <p>${new Date(request.date).toLocaleDateString()} at ${request.time}</p>
                             ${seniorRatingHtml}
                         </div>
-                        <span class="view-details-arrow">></span>
                     </div>
                 `;
                 availableContainer.appendChild(el);

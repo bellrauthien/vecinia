@@ -94,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let statusBadge = '';
         if (reminder.needs_volunteer === 1) {
             if (reminder.completed === 1) {
-                statusBadge = `<span class="status-badge completed">Completado</span>`;
+                statusBadge = `<span class="status-badge completed">Completed</span>`;
             } else if (reminder.requestStatus === 'accepted') {
-                statusBadge = `<span class="status-badge accepted">Aceptado</span>`;
+                statusBadge = `<span class="status-badge accepted">Accepted</span>`;
             } else {
-                statusBadge = `<span class="status-badge pending">Pendiente</span>`;
+                statusBadge = `<span class="status-badge pending">Pending</span>`;
             }
         }
         
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             volunteerInfo = `
                 <div class="volunteer-info">
-                    <span class="volunteer-label">Voluntario:</span> 
+                    <span class="volunteer-label">Volunteer:</span> 
                     <span class="volunteer-name">${reminder.volunteerName}</span>
                     ${reminder.volunteerPhone ? `<span class="volunteer-phone">📞 ${reminder.volunteerPhone}</span>` : ''}
                     ${ratingHtml}
@@ -161,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('delete-button');
         deleteButton.innerHTML = '🗑️';
-        deleteButton.title = 'Eliminar recordatorio';
+        deleteButton.title = 'Delete appointment';
         deleteButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que el click se propague al li
+            e.stopPropagation(); // Prevent click from propagating to li
             deleteReminder(reminder.id);
         });
         
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Actualizar las clases para el nuevo diseño
                 completeButton.className = 'btn btn-success btn-sm';
-                completeButton.innerHTML = '<i class="fas fa-check"></i> Marcar como completado';
+                completeButton.innerHTML = '<i class="fas fa-check"></i> Mark as completed';
                 
                 completeButtonContainer.appendChild(completeButton);
                 li.appendChild(completeButtonContainer);

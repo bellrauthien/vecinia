@@ -200,11 +200,11 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
                 successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Thank you for your rating!';
                 form.appendChild(successMessage);
                 
-                // Deshabilitar botones de Update y Delete si existen
+                // Disable Update and Delete buttons if they exist
                 const updateButtons = document.querySelectorAll('.btn');
                 const deleteButton = document.getElementById('delete-button');
                 
-                // Deshabilitar todos los botones de acción (puede haber más de uno en la página)
+                // Disable all action buttons (there may be more than one on the page)
                 updateButtons.forEach(button => {
                     if (button && (button.textContent.includes('Update') || button.textContent.includes('Save'))) {
                         button.disabled = true;
@@ -218,7 +218,7 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
                     deleteButton.style.display = 'none';
                 }
                 
-                // Ocultar el contenedor de calificación después de un tiempo
+                // Hide the rating container after a while
                 setTimeout(() => {
                     const ratingContainer = form.closest('.rating-form-container');
                     if (ratingContainer) {
@@ -235,7 +235,7 @@ function createRatingForm(reminderId, raterId, ratedId, userRole, onSubmitSucces
             submitButton.disabled = false;
             submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Rating';
             
-            // Mostrar mensaje de error con estilo moderno
+            // Show error message with modern styling
             const errorMessage = document.createElement('div');
             errorMessage.className = 'message-container error show';
             errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message || 'An error occurred while submitting your rating'}`;
@@ -254,42 +254,42 @@ function createCompleteButton(reminderId, onCompleteSuccess) {
     button.textContent = 'Marcar como completado';
     
     button.addEventListener('click', async () => {
-        if (confirm('¿Estás seguro de que deseas marcar esta solicitud como completada?')) {
+        if (confirm('Are you sure you want to mark this request as completed?')) {
             try {
                 button.disabled = true;
-                button.textContent = 'Procesando...';
+                button.textContent = 'Processing...';
                 
                 const response = await fetch(`/api/reminders/${reminderId}/complete`, {
                     method: 'POST'
                 });
                 
                 if (response.ok) {
-                    // Obtener información del recordatorio para mostrar el formulario de calificación
+                    // Get reminder information to show the rating form
                     try {
                         const reminderResponse = await fetch(`/api/reminders/${reminderId}`);
                         if (reminderResponse.ok) {
                             const reminderData = await reminderResponse.json();
                             
-                            // Crear el contenedor para el formulario de calificación
+                            // Create container for the rating form
                             const ratingContainer = document.createElement('div');
                             ratingContainer.className = 'rating-form-container mt-3';
                             ratingContainer.innerHTML = `
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title"><i class="fas fa-star"></i> Valorar al voluntario</h3>
+                                        <h3 class="card-title"><i class="fas fa-star"></i> Rate the volunteer</h3>
                                     </div>
                                     <div class="card-body" id="rating-form-${reminderId}"></div>
                                 </div>
                             `;
                             
-                            // Insertar el contenedor después del botón
+                            // Insert the container after the button
                             const parentElement = button.parentElement.parentElement; // li element
                             parentElement.appendChild(ratingContainer);
                             
-                            // Ocultar el botón de completar
+                            // Hide the complete button
                             button.parentElement.style.display = 'none';
                             
-                            // Crear el formulario de calificación
+                            // Create the rating form
                             const user = JSON.parse(localStorage.getItem('user'));
                             if (user && reminderData.volunteerId) {
                                 const ratingForm = createRatingForm(
@@ -298,19 +298,19 @@ function createCompleteButton(reminderId, onCompleteSuccess) {
                                     reminderData.volunteerId,
                                     'senior',
                                     () => {
-                                        // Callback cuando se envía la calificación exitosamente
+                                        // Callback when rating is successfully submitted
                                         if (onCompleteSuccess) {
                                             onCompleteSuccess();
                                         }
                                     }
                                 );
                                 
-                                // Actualizar el estilo del formulario para el nuevo diseño
+                                // Update the form style for the new design
                                 const formContainer = document.getElementById(`rating-form-${reminderId}`);
                                 if (formContainer) {
                                     formContainer.appendChild(ratingForm);
                                     
-                                    // Actualizar los estilos de los elementos del formulario
+                                    // Update the styles of form elements
                                     const submitButton = formContainer.querySelector('button');
                                     if (submitButton) {
                                         submitButton.className = 'btn btn-primary btn-block mt-3';

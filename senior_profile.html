@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VecinAI - Mi Perfil</title>
+    <title>VecinAI - My Profile</title>
     <link rel="stylesheet" href="modern-style.css">
     <!-- Font Awesome for better icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,8 +15,8 @@
                 <a href="index.html" class="home-button" title="Home">
                     <i class="fas fa-home"></i>
                 </a>
-                <h1>Mi Perfil</h1>
-                <a href="#" id="logout-button" class="logout-button" title="Cerrar sesión">
+                <h1>My Profile</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Sign out">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -24,22 +24,22 @@
         <main>
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-user-edit"></i> Actualizar Información</h2>
+                    <h2 class="card-title"><i class="fas fa-user-edit"></i> Update Information</h2>
                 </div>
                 <div class="card-body">
                     <form id="senior-profile-form" class="simple-form">
                         <div class="form-group">
-                            <label for="email" class="form-label">Correo electrónico:</label>
+                            <label for="email" class="form-label">Email:</label>
                             <input type="email" id="email" name="email" class="form-control" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="phone" class="form-label">Número de teléfono:</label>
+                            <label for="phone" class="form-label">Phone number:</label>
                             <input type="tel" id="phone" name="phone" class="form-control" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="province" class="form-label">Provincia:</label>
+                            <label for="province" class="form-label">Province:</label>
                             <select id="province" name="province" class="form-control" required>
                     <option value="">Select province</option>
                     <option value="Álava">Álava</option>
@@ -96,18 +96,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="about_me" class="form-label">Sobre mí:</label>
-                            <textarea id="about_me" name="about_me" rows="4" class="form-control" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+                            <label for="about_me" class="form-label">About me:</label>
+                            <textarea id="about_me" name="about_me" rows="4" class="form-control" placeholder="Tell us a bit about yourself..."></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="last-login" class="form-label">Último acceso:</label>
+                            <label for="last-login" class="form-label">Last login:</label>
                             <input type="text" id="last-login" name="last-login" class="form-control" readonly>
                         </div>
 
                         <div id="message-container" class="message-container"></div>
                         <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-save"></i> Guardar Perfil
+                            <i class="fas fa-save"></i> Save Profile
                         </button>
                     </form>
                 </div>

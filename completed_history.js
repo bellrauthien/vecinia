@@ -7,47 +7,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Función para eliminar un recordatorio
+    // Function to delete a reminder
     const deleteReminder = async (id) => {
-        if (confirm('¿Estás seguro de que deseas eliminar este recordatorio?')) {
+        if (confirm('Are you sure you want to delete this appointment?')) {
             try {
                 const response = await fetch(`/api/reminders/${id}`, {
                     method: 'DELETE'
                 });
                 
                 if (response.ok) {
-                    // Actualizar la lista de recordatorios
+                    // Update the list of reminders
                     fetchCompletedReminders();
                 } else {
-                    alert('No se pudo eliminar el recordatorio. Por favor, inténtalo de nuevo.');
+                    alert('Could not delete the appointment. Please try again.');
                 }
             } catch (error) {
-                console.error('Error al eliminar el recordatorio:', error);
-                alert('Ocurrió un error al eliminar el recordatorio.');
+                console.error('Error deleting the appointment:', error);
+                alert('An error occurred while deleting the appointment.');
             }
         }
     };
     
-    // Función para crear un elemento de recordatorio
+    // Function to create a reminder item
     const createReminderItem = (reminder) => {
         const li = document.createElement('li');
         li.classList.add('reminder-item-simple');
         li.dataset.id = reminder.id; // Store reminder ID
 
-        // Crear un contenedor para el contenido principal del recordatorio
+        // Create a container for the main content of the reminder
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('reminder-content');
         
-        // Determinar el estado y la clase CSS correspondiente
+        // Determine the status and corresponding CSS class
         let statusBadge = '';
         if (reminder.needs_volunteer === 1) {
-            statusBadge = `<span class="status-badge completed">Completado</span>`;
+            statusBadge = `<span class="status-badge completed">Completed</span>`;
         }
         
-        // Información del voluntario si está disponible
+        // Volunteer information if available
         let volunteerInfo = '';
         if (reminder.volunteerName) {
-            // Crear la información de calificación si está disponible
+            // Create rating information if available
             let ratingHtml = '';
             if (reminder.volunteerRating > 0) {
                 const ratingStars = [];
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             volunteerInfo = `
                 <div class="volunteer-info">
-                    <span class="volunteer-label">Voluntario:</span> 
+                    <span class="volunteer-label">Volunteer:</span> 
                     <span class="volunteer-name">${reminder.volunteerName}</span>
                     ${reminder.volunteerPhone ? `<span class="volunteer-phone">📞 ${reminder.volunteerPhone}</span>` : ''}
                     ${ratingHtml}
@@ -94,22 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>${new Date(reminder.date).toLocaleDateString()} at ${reminder.time}</span>
         `;
         
-        // Hacer que el contenido sea clickeable para editar
+        // Make the content clickable for editing
         contentDiv.addEventListener('click', () => {
             window.location.href = `new_reminder.html?id=${reminder.id}`;
         });
         
-        // Crear el botón de eliminar
+        // Create the delete button
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('delete-button');
         deleteButton.innerHTML = '🗑️';
-        deleteButton.title = 'Eliminar recordatorio';
+        deleteButton.title = 'Delete appointment';
         deleteButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que el click se propague al li
+            e.stopPropagation(); // Prevent click from propagating to li
             deleteReminder(reminder.id);
         });
         
-        // Añadir el contenido y el botón al elemento de la lista
+        // Add the content and button to the list item
         li.appendChild(contentDiv);
         li.appendChild(deleteButton);
         
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchCompletedReminders = async () => {
         try {
             console.log('Fetching completed reminders for user:', user.id);
-            // Usar el endpoint correcto para obtener los recordatorios completados
+            // Use the correct endpoint to get completed reminders
             const response = await fetch(`/api/reminders?userId=${user.id}&completed=1`);
             console.log('Response status:', response.status);
             
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const reminders = await response.json();
                 console.log('Completed reminders received:', reminders);
                 
-                // Limpiar la lista
+                // Clear the list
                 completedRemindersList.innerHTML = '';
                 
                 if (reminders.length === 0) {
@@ -135,10 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Ordenar recordatorios por fecha (más recientes primero)
+                // Sort reminders by date (most recent first)
                 reminders.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                // Renderizar todos los recordatorios completados
+                // Render all completed reminders
                 reminders.forEach(reminder => {
                     const li = createReminderItem(reminder);
                     completedRemindersList.appendChild(li);
