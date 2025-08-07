@@ -86,11 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
         li.classList.add('reminder-item-simple');
         li.dataset.id = reminder.id; // Store reminder ID
 
-        // Add a click listener to all reminders to view details
-        li.classList.add('editable');
-        li.addEventListener('click', () => {
-            window.location.href = `new_reminder.html?id=${reminder.id}`;
-        });
+        // Make the reminder clickable only if it's not completed
+        if (reminder.completed !== 1) {
+            li.classList.add('editable');
+            li.addEventListener('click', () => {
+                window.location.href = `new_reminder.html?id=${reminder.id}`;
+            });
+        }
 
         // Crear un contenedor para el contenido principal del recordatorio
         const contentDiv = document.createElement('div');
@@ -158,10 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span><i class="far fa-calendar-alt"></i> ${new Date(reminder.date).toLocaleDateString()} at ${reminder.time}</span>
         `;
         
-        // Hacer que el contenido sea clickeable para editar
-        contentDiv.addEventListener('click', () => {
-            window.location.href = `new_reminder.html?id=${reminder.id}`;
-        });
+
         
         // Add delete button only if the reminder is not completed
         if (reminder.completed !== 1) {

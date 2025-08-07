@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Si hay un ID, estamos en modo edición
     if (reminderId) {
+        console.log(`[DEBUG] Modo Edición. ID del recordatorio: ${reminderId}`);
         document.querySelector('h1').textContent = 'Edit Reminder';
         document.querySelector('.action-button').textContent = 'Update Reminder';
         
@@ -76,31 +77,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         try {
+            console.log(`[DEBUG] Obteniendo datos para el recordatorio con ID: ${reminderId}`);
             const response = await fetch(`/api/reminders/${reminderId}`);
             if (response.ok) {
                 const reminder = await response.json();
+                console.log('[DEBUG] Datos del recordatorio recibidos:', reminder);
                 // Rellenar el formulario con los datos existentes
                 document.getElementById('reminder-note').value = reminder.note;
-
-                // If the reminder is completed, disable all form fields
-                if (reminder.completed === 1) {
-                    document.querySelector('h1').textContent = 'Completed Appointment';
-                    const formElements = newReminderForm.elements;
-                    for (let i = 0; i < formElements.length; i++) {
-                        formElements[i].disabled = true;
-                    }
-                    // Hide the submit and delete buttons
-                    document.querySelector('.action-button').style.display = 'none';
-                    deleteButton.style.display = 'none';
-                }
-
                 document.getElementById('reminder-type').value = reminder.type;
                 document.getElementById('reminder-date').value = reminder.date;
                 document.getElementById('reminder-time').value = reminder.time;
-
                 document.getElementById('province').value = reminder.province;
                 document.getElementById('needs-volunteer').checked = reminder.needs_volunteer;
-                
+
                 // Mostrar información del voluntario y estado de la solicitud si es necesario
                 if (reminder.needs_volunteer) {
                     const volunteerInfoSection = document.getElementById('volunteer-info-section');
@@ -115,29 +104,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     
                     // Mostrar el estado de la solicitud
                     if (reminder.volunteerId) {
-                        // Verificar si el recordatorio está completado
                         if (reminder.completed === 1) {
                             requestStatus.textContent = 'Completado';
                             requestStatus.className = 'status-badge completed';
                         } else {
                             requestStatus.textContent = 'Aceptado';
                             requestStatus.className = 'status-badge accepted';
-                            
-                            // Si el usuario es el senior o el voluntario, mostrar botón para marcar como completado
                             if (user.id == reminder.userId || user.id == reminder.volunteerId) {
                                 completeSection.style.display = 'block';
-                                completeSection.appendChild(createCompleteButton(reminder.id, () => {
-                                    // Recargar la página para mostrar la opción de calificar
-                                    window.location.reload();
-                                }));
+                                completeSection.appendChild(createCompleteButton(reminder.id, () => { window.location.reload(); }));
                             }
                         }
                         
-                        // Mostrar información del voluntario
                         volunteerName.textContent = `Nombre: ${reminder.volunteerFirstName || ''} ${reminder.volunteerLastName || ''}`;
                         volunteerPhone.textContent = reminder.volunteerPhone ? `Teléfono: ${reminder.volunteerPhone}` : '';
                         
-                        // Mostrar calificación del voluntario si tiene
                         if (reminder.volunteerRating > 0) {
                             const ratingDiv = document.createElement('div');
                             ratingDiv.className = 'user-rating-badge';
@@ -145,35 +126,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                             volunteerRatingContainer.appendChild(ratingDiv);
                         }
                         
-                        // Si el recordatorio está completado, verificar si el usuario puede calificar
                         if (reminder.completed) {
-                            // Verificar si el usuario ya ha calificado este recordatorio
                             fetch(`/api/reminders/${reminder.id}/can-rate?userId=${user.id}`)
                                 .then(response => response.json())
                                 .then(data => {
                                     if (!data.canRate && data.hasRated) {
-                                        // El usuario ya ha calificado, deshabilitar los botones
                                         const updateButton = document.querySelector('.action-button');
                                         const deleteButton = document.getElementById('delete-button');
-                                        
-                                        if (updateButton) {
-                                            updateButton.disabled = true;
-                                            updateButton.style.opacity = '0.5';
-                                            updateButton.style.cursor = 'not-allowed';
-                                        }
-                                        
-                                        if (deleteButton) {
-                                            deleteButton.disabled = true;
-                                            deleteButton.style.display = 'none';
-                                        }
+                                        if (updateButton) { updateButton.disabled = true; updateButton.style.opacity = '0.5'; updateButton.style.cursor = 'not-allowed'; }
+                                        if (deleteButton) { deleteButton.disabled = true; deleteButton.style.display = 'none'; }
                                     } else {
-                                        // El usuario puede calificar, mostrar el formulario
                                         checkAndShowRatingForm(reminder, user.id, ratingSection);
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error verificando si puede calificar:', error);
-                                    // En caso de error, intentar mostrar el formulario de calificación
                                     checkAndShowRatingForm(reminder, user.id, ratingSection);
                                 });
                         }
@@ -182,6 +149,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         requestStatus.className = 'status-badge pending';
                         document.getElementById('volunteer-details').style.display = 'none';
                     }
+                }
+
+                // Si el recordatorio está completado, deshabilitar todo. ESTO DEBE IR DESPUÉS DE RELLENAR EL FORMULARIO.
+                if (reminder.completed === 1) {
+                    document.querySelector('h1').textContent = 'Completed Appointment';
+                    const formElements = newReminderForm.elements;
+                    for (let i = 0; i < formElements.length; i++) {
+                        formElements[i].disabled = true;
+                    }
+                    document.querySelector('.action-button').style.display = 'none';
+                    deleteButton.style.display = 'none';
                 }
             } else {
                 alert('Could not find the reminder to edit.');
@@ -242,29 +220,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayMessage('An error occurred while saving the reminder.', 'error', messageContainer);
         }
 
-        const url = reminderId ? `/api/reminders/${reminderId}` : '/api/reminders';
-        const method = reminderId ? 'PUT' : 'POST';
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(reminderData),
-            });
-
-            if (response.ok) {
-                displayMessage(`Reminder ${reminderId ? 'updated' : 'added'} successfully!`, 'success', messageContainer);
-                setTimeout(() => {
-                    window.location.href = 'reminders.html';
-                }, 2000);
-            } else {
-                displayMessage(`Failed to ${reminderId ? 'update' : 'add'} reminder. Please try again.`, 'error', messageContainer);
-            }
-        } catch (error) {
-            console.error('Error saving reminder:', error);
-            displayMessage('An error occurred while saving the reminder.', 'error', messageContainer);
-        }
     });
 });
