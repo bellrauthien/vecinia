@@ -81,6 +81,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const reminder = await response.json();
                 // Rellenar el formulario con los datos existentes
                 document.getElementById('reminder-note').value = reminder.note;
+
+                // If the reminder is completed, disable all form fields
+                if (reminder.completed === 1) {
+                    document.querySelector('h1').textContent = 'Completed Appointment';
+                    const formElements = newReminderForm.elements;
+                    for (let i = 0; i < formElements.length; i++) {
+                        formElements[i].disabled = true;
+                    }
+                    // Hide the submit and delete buttons
+                    document.querySelector('.action-button').style.display = 'none';
+                    deleteButton.style.display = 'none';
+                }
+
                 document.getElementById('reminder-type').value = reminder.type;
                 document.getElementById('reminder-date').value = reminder.date;
                 document.getElementById('reminder-time').value = reminder.time;
@@ -193,9 +206,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             needs_volunteer: document.getElementById('needs-volunteer').checked
         };
 
-        // Añadimos el userId solo si estamos creando un nuevo recordatorio
-        if (!reminderId) {
-            reminderData.userId = user.id;
+        try {
+            let response;
+            if (reminderId) {
+                // Update existing reminder
+                response = await fetch(`/api/reminders/${reminderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reminderData)
+                });
+            } else {
+                // Create new reminder
+                reminderData.userId = user.id;
+                response = await fetch('/api/reminders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reminderData)
+                });
+            }
+
+            if (response.ok) {
+                displayMessage(`Reminder ${reminderId ? 'updated' : 'created'} successfully!`, 'success', messageContainer);
+                setTimeout(() => {
+                    window.location.href = 'reminders.html';
+                }, 2000);
+            } else {
+                displayMessage('Failed to save the reminder.', 'error', messageContainer);
+            }
+        } catch (error) {
+            console.error('Error saving reminder:', error);
+            displayMessage('An error occurred while saving the reminder.', 'error', messageContainer);
         }
 
         const url = reminderId ? `/api/reminders/${reminderId}` : '/api/reminders';

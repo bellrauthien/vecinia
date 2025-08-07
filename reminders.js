@@ -86,6 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
         li.classList.add('reminder-item-simple');
         li.dataset.id = reminder.id; // Store reminder ID
 
+        // Add a click listener to all reminders to view details
+        li.classList.add('editable');
+        li.addEventListener('click', () => {
+            window.location.href = `new_reminder.html?id=${reminder.id}`;
+        });
+
         // Crear un contenedor para el contenido principal del recordatorio
         const contentDiv = document.createElement('div');
         contentDiv.classList.add('reminder-content');
@@ -157,19 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = `new_reminder.html?id=${reminder.id}`;
         });
         
-        // Crear el botón de eliminar
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('delete-button');
-        deleteButton.innerHTML = '🗑️';
-        deleteButton.title = 'Delete appointment';
-        deleteButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent click from propagating to li
-            deleteReminder(reminder.id);
-        });
-        
-        // Añadir el contenido y el botón al elemento de la lista
+        // Add delete button only if the reminder is not completed
+        if (reminder.completed !== 1) {
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-button');
+            deleteButton.innerHTML = '🗑️';
+            deleteButton.title = 'Delete appointment';
+            deleteButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from propagating to li
+                deleteReminder(reminder.id);
+            });
+            li.appendChild(deleteButton);
+        }
+
+        // Añadir el contenido al elemento de la lista
         li.appendChild(contentDiv);
-        li.appendChild(deleteButton);
         
         // Añadir botón de completar tarea si es un recordatorio aceptado
         if (reminder.needs_volunteer === 1 && reminder.requestStatus === 'accepted' && reminder.completed !== 1) {

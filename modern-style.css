@@ -279,6 +279,7 @@ main {
     border-radius: var(--radius-lg);
     background-color: var(--card-bg);
     color: var(--text-primary);
+    font-family: 'Nunito', sans-serif;
     font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
@@ -732,5 +733,20 @@ select.form-control {
     .message.bot {
         background-color: #2A2A2A;
         color: var(--text-primary);
+    }
+
+    /* === Chat Interface === */
+    .chat-input form {
+        display: flex;
+        gap: var(--spacing-sm);
+        align-items: center;
+    }
+
+    .chat-input #message-input {
+        flex-grow: 1; /* Makes the input field take up available space */
+    }
+
+    .chat-input .btn {
+        flex-shrink: 0; /* Prevents the button from shrinking */
     }
 }

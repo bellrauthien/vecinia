@@ -259,6 +259,46 @@ app.post('/api/user/profile', (req, res) => {
 });
 
 // --- Reminders API Endpoints ---
+
+// Endpoint to get a single reminder by ID
+app.get('/api/reminders/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = `
+        SELECT r.*, u.firstName as seniorFirstName, u.lastName as seniorLastName, u.phone as seniorPhone, u.rating as seniorRating, u.rating_count as seniorRatingCount
+        FROM reminders r
+        JOIN users u ON r.userId = u.id
+        WHERE r.id = ?
+    `;
+    db.get(sql, [id], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json(row);
+    });
+});
+
+// Endpoint to update a reminder
+app.put('/api/reminders/:id', (req, res) => {
+    const { id } = req.params;
+    const { note, type, date, time, province, needs_volunteer } = req.body;
+    const sql = `UPDATE reminders SET 
+                    note = ?,
+                    type = ?,
+                    date = ?,
+                    time = ?,
+                    province = ?,
+                    needs_volunteer = ? 
+                 WHERE id = ?`;
+    db.run(sql, [note, type, date, time, province, needs_volunteer, id], function(err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ message: 'Reminder updated successfully', changes: this.changes });
+    });
+});
+
 app.get('/api/reminders', (req, res) => {
     const { userId } = req.query;
     if (!userId) {
