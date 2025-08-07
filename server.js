@@ -198,7 +198,7 @@ app.post('/api/login', (req, res) => {
 // Endpoint to get user profile by ID
 app.get('/api/user/profile/:id', (req, res) => {
     const { id } = req.params;
-    const sql = 'SELECT id, firstName, lastName, email, profileType, address, phone, skills, availability, province, about_me, birthDate, last_login_date, rating, rating_count FROM users WHERE id = ?';
+    const sql = 'SELECT id, firstName, lastName, email, profileType, address, phone, skills, availability, province, about_me, birthDate, last_login_date, rating, rating_count, emergency_contact_name, emergency_contact_phone FROM users WHERE id = ?';
     db.get(sql, [id], (err, user) => {
         if (err) {
             return res.status(500).json({ error: 'Error fetching user profile' });

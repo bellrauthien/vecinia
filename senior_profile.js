@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('phone').value = profile.phone || '';
                 document.getElementById('province').value = profile.province || '';
                 document.getElementById('about_me').value = profile.about_me || '';
+                document.getElementById('emergency_contact_name').value = profile.emergency_contact_name || '';
+                document.getElementById('emergency_contact_phone').value = profile.emergency_contact_phone || '';
 
                 // Display last login date and make it read-only
                 const lastLoginInput = document.getElementById('last-login');
@@ -48,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
             province: document.getElementById('province').value,
-            about_me: document.getElementById('about_me').value
+            about_me: document.getElementById('about_me').value,
+            emergency_contact_name: document.getElementById('emergency_contact_name').value,
+            emergency_contact_phone: document.getElementById('emergency_contact_phone').value
         };
 
         try {
