@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VecinAI - Request Help</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="index.html" class="home-button" title="Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <h1>Request Help</h1>
+                <a href="#" id="logout-button" class="logout-button" title="Sign out">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+        <main>
+            <div class="card">
+                <div class="card-body">
+                    <p>If you need immediate assistance, please use the options below.</p>
+                </div>
+            </div>
+            <button id="call-emergency-contact" class="action-button btn-danger">
+                <i class="fas fa-phone-alt"></i>
+                <span>Call Emergency Contact</span>
+            </button>
+            <button id="call-112" class="action-button btn-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Call 112 for Emergencies</span>
+            </button>
+        </main>
+    </div>
+    <script src="request_help.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
