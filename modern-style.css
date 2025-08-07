@@ -398,9 +398,12 @@ select.form-control {
 }
 
 .card-footer {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
     display: flex;
     justify-content: flex-end;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 /* === Reminders === */

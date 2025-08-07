@@ -17,10 +17,5 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'reminders.html';
     });
 
-    helpButton.addEventListener('click', () => {
-        // A confirmation dialog is good practice for critical actions
-        if (confirm('Are you sure you want to request help? An alert will be sent.')) {
-            alert('Help is on the way! Your contacts have been notified.');
-        }    // Future implementation: send a notification or make a call
-    });
+
 });
