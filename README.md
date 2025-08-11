@@ -10,9 +10,10 @@ The main goal of VecinAI is to offer a user-friendly technological tool that com
 
 ### For Seniors
 
-- **Appointment Management**: Allows users to create, view, and delete appointments for medical visits, shopping, or any other task.
-- **Volunteer Selection**: View volunteer profiles with ratings and select the most suitable one.
+- **Appointment Management**: Allows users to create, view, and edit their appointments for medical visits, shopping, or any other task.
+- **Volunteer Requests**: Create requests for help that are visible to volunteers in the area. Volunteers can then accept these requests.
 - **Appointment Tracking**: Track the status of appointments (pending, accepted, completed).
+- **Emergency Contact & Help**: Add an emergency contact to their profile and access a dedicated page to quickly call them or emergency services (112).
 - **Rating System**: Rate volunteers after completing appointments to help build trust in the community.
 - **Virtual Assistant**: Chat with a virtual assistant for help and guidance.
 
