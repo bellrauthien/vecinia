@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const app = express();
-const port = 3003;
+const port = process.env.PORT || 8080;
 
 // Check for API key (Temporarily disabled)
 /*
@@ -849,4 +849,5 @@ app.get('/api/reminders/:id/can-rate', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
     console.log(`Frontend is served from the same address, e.g., http://localhost:${port}/register.html`);
+    console.log('Application successfully started and ready to accept connections');
 });
